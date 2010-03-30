@@ -28,7 +28,8 @@ class Astre{
 		~Astre();
 		Astre& operator=(const Astre& a);
 		
-		void ComputeSpeed(System sys);
+		void ComputeForce(System& sys);
+		void ComputeSpeed();
 		void Move();
 		
 		static const float cG;
@@ -42,7 +43,8 @@ class Astre{
 		float y;
 		float vx;
 		float vy;
-	
+		float fx;
+		float fy;
 };
 
 

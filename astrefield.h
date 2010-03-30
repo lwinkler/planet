@@ -76,6 +76,7 @@ class AstreField : public QWidget
        private slots:
 	       void moveSys();
 	       void pauseSimulation();
+	       void init();
 	       
        signals:
 	       //void hit();

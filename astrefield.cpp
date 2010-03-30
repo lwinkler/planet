@@ -65,28 +65,17 @@ AstreField::AstreField(QWidget *parent)
 : QWidget(parent)
 {
 	//currentAngle = 45;
-	timerCount = 0;
 	dispTimer = new QTimer(this);
 	connect(dispTimer, SIGNAL(timeout()), this, SLOT(moveSys()));
 	
 	setPalette(QPalette(QColor(250, 250, 200)));
 	setAutoFillBackground(true);
+	setPalette(QPalette(QColor(250, 250, 200)));
+	setAutoFillBackground(true);
 	//newTarget();
 	//sys=new System;
 	
-	for(int i=0; i< 2 ; i++){
-		//Astre* astre= new Astre(*sys);
-		Astre astre;
-		astre.m=1e11;
-		astre.r=10;
-		astre.x=100*i;
-		astre.y=100*i;
-		astre.vx=0;
-		astre.vy=0;
-		sys.AddAstre(astre);
-	}
-	setPalette(QPalette(QColor(250, 250, 200)));
-	setAutoFillBackground(true);
+	init();
 
 	
 //	setUpdatesEnabled(true);
@@ -186,9 +175,9 @@ void AstreField::pauseSimulation()
 
 void AstreField::moveSys()
 {
+	//QRegion region = QRect();
 	//cout<<"moveSys"<<endl;
 	for(unsigned int i =0; i< sys.astre.size(); i++){
-		QRegion region = QRect();
 		++timerCount;
 		
 		sys.ComputeSpeed();
@@ -206,9 +195,9 @@ void AstreField::moveSys()
 		emit missed();
 		emit canShoot(true);
 		} else {*/
-			region = region.unite(astreRect);
+		//	region = region.unite(astreRect);
 		//}
-		update(region);
+		//update(region);
 	}
 	update();
 }
@@ -246,7 +235,6 @@ void AstreField::paintEvent(QPaintEvent * /* event */)
 	//exit(-1);
 	//cout<<"paintEvent"<<endl;
 	QPainter painter(this);
-	painter.drawEllipse(QPointF(33,33), 4, 40);
 	painter.setBackground(Qt::black);
 	
 
@@ -263,6 +251,54 @@ void AstreField::paintAstre(QPainter &painter, Astre* astre)
 		painter.setBackground(Qt::black);
 		painter.drawEllipse(QPointF(astre->x, astre->y), astre->r, astre->r);
 	}
+}
+void AstreField::init()
+{
+	timerCount = 0;
+	dispTimer->stop();
+	sys.astre.resize(0);
+	{
+		Astre astre;
+		astre.m=6e12;
+		astre.r=pow(astre.m/6e12, 0.333)*20;
+		astre.x=150;
+		astre.y=150;
+		astre.vx=0;
+		astre.vy=0;
+		sys.AddAstre(astre);
+	}
+	{
+		Astre astre;
+		astre.m=1e10;
+		astre.r=pow(astre.m/6e12, 0.333)*20;
+		astre.x=150;
+		astre.y=50;
+		astre.vx=2;
+		astre.vy=0;
+		sys.AddAstre(astre);
+	}
+	{
+		Astre astre;
+		astre.m=2e10;
+		astre.r=pow(astre.m/6e12, 0.333)*20;
+		astre.x=50;
+		astre.y=150;
+		astre.vx=1;
+		astre.vy=-2;
+		sys.AddAstre(astre);
+	}
+	{
+		Astre astre;
+		astre.m=.5e10;
+		astre.r=pow(astre.m/6e12, 0.333)*20;
+		astre.x=250;
+		astre.y=150;
+		astre.vx=-1;
+		astre.vy=2;
+		sys.AddAstre(astre);
+	}
+	
+	update();
 }
 /*
 void AstreField::paintTarget(QPainter &painter)

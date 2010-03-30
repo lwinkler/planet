@@ -56,7 +56,7 @@ GameBoard::GameBoard(QWidget *parent)
 	
 	QPushButton *restart = new QPushButton(tr("&New Simulation"));
 	restart->setFont(QFont("Times", 18, QFont::Bold));
-	//connect(restart, SIGNAL(clicked()), this, SLOT(newGame()));
+	connect(restart, SIGNAL(clicked()), astreField, SLOT(init()));
 	
 	QPushButton *pause = new QPushButton(tr("&Play/Pause"));
 	pause->setFont(QFont("Times", 18, QFont::Bold));
