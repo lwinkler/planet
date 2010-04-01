@@ -3,14 +3,16 @@
 #define ASTRE_H
 
 #include <vector>
+#include <list>
 
+#define ARR list
 
 class Astre;
 
 class System{
 
 	public:
-		std::vector<Astre> astre;
+		std::list<Astre> astre;
 		System();
 		~System();
 		int ComputeSpeed();

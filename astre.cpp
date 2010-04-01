@@ -51,7 +51,7 @@ void Astre::ComputeForce(System& sys, int& nbCollisions){
 	nbCollisions=0;
 	//Compute forces : use simetry of forces
 	if(m>0)
-	for(vector<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++){
+	for(ARR<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++){
 		if(a->m >0 && a->num > num){
 			//cout<<"AAA"<<sys.astre.size()<<" "<<num<<" vs "<<a->num<<endl;
 			float ex= a->x - x;
@@ -122,18 +122,18 @@ int System::NbAstre(){
 
 int System::ComputeSpeed(){
 	int nbCollision=0;
-	for(vector<Astre>::iterator a=astre.begin(); a != astre.end(); a++){
+	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++){
 		a->fx=0;
 		a->fy=0;
 	}
 	
-	for(vector<Astre>::iterator a=astre.begin(); a != astre.end(); a++){
+	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++){
 		int nbColl1;
 		a->ComputeForce(*this, nbColl1);
 		nbCollision+=nbColl1;
 	}
 	
-	for(vector<Astre>::iterator a=astre.begin(); a != astre.end(); a++){
+	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++){
 		a->ComputeSpeed();
 	}
 	
@@ -142,12 +142,12 @@ int System::ComputeSpeed(){
 }
 
 void System::Move(){
-	for(vector<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
+	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 		a->Move();
 	
-	vector<Astre>::iterator a=astre.begin();
+	ARR<Astre>::iterator a = astre.begin();
 	while(a != astre.end())
-		if(a->m <= 0)astre.erase(a);
+		if(a->m <= 0)a = astre.erase(a);
 		else a++;
 }
 
@@ -156,7 +156,7 @@ void System::GetGravityCenter(float& x, float& y)
 	x=0;
 	y=0;
 	float m=0;
-	for(vector<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
+	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 	{
 		if(a->m >0){
 			x+= a->m * a->x;
@@ -173,7 +173,7 @@ void System::GetBiggestAstrePosition(float& x, float& y)
 	x=0;
 	y=0;
 	float m=0;
-	for(vector<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
+	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 	{
 		if(a->m > m){
 			x =a->x;
@@ -188,7 +188,7 @@ void System::GetBorders(float& x1, float& y1, float& x2, float& y2)
 	x1=y1=1e999;
 	x2=y2=-1e999;
 	
-	for(vector<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
+	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 	{
 		if(a->m > 0){
 			if(a->x< x1) x1 =a->x;

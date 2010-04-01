@@ -139,7 +139,11 @@ void AstreField::changeViewCenter(int index)
 			if(a->m > 0) tmp--;
 		centerView = i;
 	}*/
-	
+	centerViewAstre = sys.astre.begin();
+	if(centerView >= 0)
+		for(int i=0; i<centerView;i++)
+			centerViewAstre++;
+		
 	cout<<"change view center"<<index<<" "<<centerView<<endl;
 	update();
 }
@@ -156,10 +160,11 @@ void AstreField::moveSys()
 	++timerCount;
 	
 	int nbCollision = sys.ComputeSpeed();
+	//setUpdatesEnabled(false);
 	sys.Move();
 	if(nbCollision > 0)
 		emit nbAstreChanged(sys.NbAstre());
-	for(vector<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++){
+	for(ARR<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++){
 		
 		QRect astreRect = QRect(-a->r/2 , a->r/2, -a->r/2 , a->r/2);
 		astreRect.moveCenter(QPoint(a->x, a->y));
@@ -177,6 +182,7 @@ void AstreField::moveSys()
 		//}
 		//update(region);
 	}
+	//setUpdatesEnabled(true);
 	update();
 }
 
@@ -279,9 +285,9 @@ void AstreField::paintEvent(QPaintEvent * /* event */)
 		dispCenter = QPointF((x1+x2)/2,(y1+y2)/2);
 		dispScale = Astre::SetInRange(MIN(width()/(x2-x1), height()/(y2-y1)), 0.01, 1);
 	}else {
-		if(sys.astre[centerView].m > 0){
-			x= sys.astre[centerView].x;
-			y= sys.astre[centerView].y;
+		if(centerViewAstre != (ARR<Astre>::iterator) NULL && centerViewAstre->m > 0){
+			x= centerViewAstre->x;
+			y= centerViewAstre->y;
 		}else{
 			sys.GetBiggestAstrePosition(x,y);
 		}
@@ -296,7 +302,7 @@ void AstreField::paintEvent(QPaintEvent * /* event */)
 	
 	painter.setWorldTransform(matrix);
 
-	for(vector<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++)
+	for(ARR<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++)
 		paintAstre(painter, *a);
 	
 	if(newAstre.m > 0 ) paintAstre(painter, newAstre);

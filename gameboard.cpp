@@ -178,11 +178,11 @@ void GameBoard::fillViewCenter(){
 	
 	char str[256];
 	if(sys != NULL) 
-		for(vector<Astre>::iterator a=sys->astre.begin(); a != sys->astre.end(); a++)
+		for(ARR<Astre>::iterator a=sys->astre.begin(); a != sys->astre.end(); a++)
 			if(a->m >0)
 			{
 				sprintf(str, "%s %d", "on planet", a->num);
-				cout<<"add Item "<<a->num<<endl;
+				//cout<<"add Item "<<a->num<<endl;
 				viewCenter->addItem(str, a->num);
 			}
 }

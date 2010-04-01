@@ -110,6 +110,7 @@ class AstreField : public QWidget
 		
 		int timerCount;
 		int centerView;
+		std::ARR<Astre>::iterator centerViewAstre;
 		int scaleView;
 		QTimer *dispTimer;
 		//float shootAngle;
