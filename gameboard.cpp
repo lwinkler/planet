@@ -178,7 +178,6 @@ void GameBoard::fillViewCenter(){
 	
 	char str[256];
 	if(sys != NULL) 
-		//for(int i=0: i<viewCenter->size()i++)
 		for(vector<Astre>::iterator a=sys->astre.begin(); a != sys->astre.end(); a++)
 			if(a->m >0)
 			{

@@ -144,6 +144,11 @@ int System::ComputeSpeed(){
 void System::Move(){
 	for(vector<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 		a->Move();
+	
+	vector<Astre>::iterator a=astre.begin();
+	while(a != astre.end())
+		if(a->m <= 0)astre.erase(a);
+		else a++;
 }
 
 void System::GetGravityCenter(float& x, float& y)

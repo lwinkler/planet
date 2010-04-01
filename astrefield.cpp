@@ -118,82 +118,13 @@ AstreField::AstreField(QWidget *parent)
 }
 
 AstreField::~AstreField(){
-//	for(int i=0; i< sys.astre.size(); i++)
-//		delete sys.astre[i];
-//	delete sys;
 }
 
-/*void AstreField::setAngle(int angle)
-{
-	if (angle < 5)
-	angle = 5;
-	if (angle > 70)
-	angle = 70;
-	if (currentAngle == angle)
-	return;
-	currentAngle = angle;
-	update(cannonRect());
-	emit angleChanged(currentAngle);
-	}
 
-void AstreField::setForce(int force)
-{
-	if (force < 0)
-		force = 0;
-		if (currentForce == force)
-			return;
-	currentForce = force;
-	emit forceChanged(currentForce);
-}
-
-void AstreField::shoot()
-{
-	if (isShooting())
-		return;
-	timerCount = 0;
-	shootAngle = currentAngle;
-	shootForce = currentForce;
-	autoShootTimer->start(5);
-	emit canShoot(false);
-}
-
-void AstreField::newTarget()
-{
-	static bool firstTime = true;
-	
-	if (firstTime) {
-		firstTime = false;
-		QTime midnight(0, 0, 0);
-		qsrand(midnight.secsTo(QTime::currentTime()));
-	}
-	target = QPoint(200 + qrand() % 190, 10 + qrand() % 255);
-	update();
-}
-
-void AstreField::setGameOver()
-{
-	if (gameEnded)
-		return;
-	if (isShooting())
-		autoShootTimer->stop();
-	gameEnded = true;
-	update();
-}
-
-void AstreField::restartGame()
-{
-	if (isShooting())
-		autoShootTimer->stop();
-	gameEnded = false;
-	update();
-	emit canShoot(true);
-}
-*/
 void AstreField::pauseSimulation()
 {
 	if(dispTimer->isActive())dispTimer->stop();
 	else dispTimer->start(timerInterval);
-	//paintEvent(NULL);
 }
 
 void AstreField::changeViewCenter(int index)
@@ -222,16 +153,16 @@ void AstreField::moveSys()
 {
 	//QRegion region = QRect();
 	//cout<<"moveSys"<<endl;
-	for(unsigned int i =0; i< sys.astre.size(); i++){
-		++timerCount;
+	++timerCount;
+	
+	int nbCollision = sys.ComputeSpeed();
+	sys.Move();
+	if(nbCollision > 0)
+		emit nbAstreChanged(sys.NbAstre());
+	for(vector<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++){
 		
-		int nbCollision = sys.ComputeSpeed();
-		sys.Move();
-		if(nbCollision > 0)
-			emit nbAstreChanged(sys.NbAstre());
-		
-		QRect astreRect = QRect(-sys.astre[i].r/2 , sys.astre[i].r/2, -sys.astre[i].r/2 , sys.astre[i].r/2);
-		astreRect.moveCenter(QPoint(sys.astre[i].x, sys.astre[i].y));
+		QRect astreRect = QRect(-a->r/2 , a->r/2, -a->r/2 , a->r/2);
+		astreRect.moveCenter(QPoint(a->x, a->y));
 		/*if (shotR.intersects(targetRect())) {
 			autoShootTimer->stop();
 			emit hit();
@@ -391,7 +322,7 @@ void AstreField::init()
 	sys.astre.resize(0);
 	{
 		Astre astre;
-		astre.m=6e12;
+		astre.m=6e13;
 		astre.r=pow(astre.m/6e12, 0.333)*20;
 		astre.x=150;
 		astre.y=150;
@@ -399,36 +330,6 @@ void AstreField::init()
 		astre.vy=0;
 		sys.AddAstre(astre);
 	}
-	/*{
-		Astre astre;
-		astre.m=1e10;
-		astre.r=pow(astre.m/6e12, 0.333)*20;
-		astre.x=150;
-		astre.y=50;
-		astre.vx=2;
-		astre.vy=0;
-		sys.AddAstre(astre);
-	}
-	{
-		Astre astre;
-		astre.m=2e10;
-		astre.r=pow(astre.m/6e12, 0.333)*20;
-		astre.x=50;
-		astre.y=150;
-		astre.vx=1;
-		astre.vy=-2;
-		sys.AddAstre(astre);
-	}
-	{
-		Astre astre;
-		astre.m=.5e10;
-		astre.r=pow(astre.m/6e12, 0.333)*20;
-		astre.x=250;
-		astre.y=150;
-		astre.vx=-1;
-		astre.vy=2;
-		sys.AddAstre(astre);
-	}*/
 	
 	update();
 }
