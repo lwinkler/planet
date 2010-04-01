@@ -65,61 +65,71 @@ class AstreField : public QWidget
 		bool isShooting() const;
 		QSize sizeHint() const;*/
 		
-		public slots:
-			/*void setAngle(int angle);
-			void setForce(int force);
-			void shoot();
-			void newTarget();
-			void setGameOver();
-			void restartGame();*/
-			
-       private slots:
-	       void moveSys();
-	       void pauseSimulation();
-	       void init();
-	       
-       signals:
-	       //void hit();
-	       //void missed();
-	       //void angleChanged(int newAngle);
-	       //void forceChanged(int newForce);
-	       //void canShoot(bool can);
-	       
-       protected:
-	       void paintEvent(QPaintEvent *event);
-	       void paintAstre(QPainter& painter, Astre* astre);
-	       void mousePressEvent(QMouseEvent *event);
-	       void mouseMoveEvent(QMouseEvent *event);
-	       void mouseReleaseEvent(QMouseEvent *event);
-	       
-       private:
-	       //void paintShot(QPainter &painter);
-	       //void paintTarget(QPainter &painter);
-	       //void paintBarrier(QPainter &painter);
-	       //void paintCannon(QPainter &painter);
-	       //QRect cannonRect() const;
-	       //QRect shotRect() const;
-	       //QRect targetRect() const;
-	       //QRect barrierRect() const;
-	       //bool barrelHit(const QPoint &pos) const;
-	       
-	       //int currentAngle;
-	       //int currentForce;
-	       
-	       int timerCount;
-	       QTimer *dispTimer;
-	       //float shootAngle;
-	       //float shootForce;
-	       
-	       //QPoint target;
-	       
-	       //bool gameEnded;
-	       //bool barrelPressed;
-	       
-	       System sys;
-	       
-	       static const int timerInterval;
-	       };
-	       
-	       #endif
-	       
+	public slots:
+		/*void setAngle(int angle);
+		void setForce(int force);
+		void shoot();
+		void newTarget();
+		void setGameOver();
+		void restartGame();*/
+		
+	private slots:
+		void init();
+		void moveSys();
+		void pauseSimulation();
+		void changeViewCenter(int index);
+		void changeViewScale(int index);
+				
+	signals:
+		//void hit();
+		//void missed();
+		void nbAstreChanged(int nb);
+		//void forceChanged(int newForce);
+		//void canShoot(bool can);
+		
+	protected:
+		void paintEvent(QPaintEvent *event);
+		void paintAstre(QPainter& painter, const Astre& astre);
+		void mousePressEvent(QMouseEvent *event);
+		void mouseMoveEvent(QMouseEvent *event);
+		void mouseReleaseEvent(QMouseEvent *event);
+		
+	private:
+		//void paintShot(QPainter &painter);
+		//void paintTarget(QPainter &painter);
+		//void paintBarrier(QPainter &painter);
+		//void paintCannon(QPainter &painter);
+		//QRect cannonRect() const;
+		//QRect shotRect() const;
+		//QRect targetRect() const;
+		//QRect barrierRect() const;
+		//bool barrelHit(const QPoint &pos) const;
+		
+		//int currentAngle;
+		//int currentForce;
+		
+		int timerCount;
+		int centerView;
+		int scaleView;
+		QTimer *dispTimer;
+		//float shootAngle;
+		//float shootForce;
+		
+		//QPoint target;
+		
+		//bool gameEnded;
+		//bool barrelPressed;
+		
+	public:
+		System sys;
+		Astre newAstre;
+		int timerCountNewAstre;
+		float dispScale;
+		QPointF dispCenter;
+
+		
+		static const int timerInterval;
+		static const Qt::GlobalColor colors[15];
+};
+
+#endif

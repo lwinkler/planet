@@ -6,13 +6,20 @@
 #include <QLCDNumber>
 #include <QLabel>
 #include <QPushButton>
+#include <QComboBox>
 #include <QShortcut>
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+
 #include "astrefield.h"
 #include "gameboard.h"
 #include "widproperties.h"
+
+using namespace std;
 
 GameBoard::GameBoard(QWidget *parent)
 : QWidget(parent)
@@ -32,6 +39,7 @@ GameBoard::GameBoard(QWidget *parent)
 	cannonBox->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 	
 	astreField = new AstreField;
+	sys= &astreField->sys;
 	
 	/*connect(angle, SIGNAL(valueChanged(int)),
 	cannonField, SLOT(setAngle(int)));
@@ -76,6 +84,23 @@ GameBoard::GameBoard(QWidget *parent)
 	//(void) new QShortcut(Qt::Key_Return, this, SLOT(fire()));
 	//(void) new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close()));
 	
+	/// View layout
+	QHBoxLayout *viewLayout = new QHBoxLayout;
+	QLabel* viewTitle = new QLabel(tr("Center"));
+	viewLayout->addWidget(viewTitle);
+	viewCenter = new QComboBox;
+	fillViewCenter();
+	connect(viewCenter, SIGNAL(activated(int)), astreField, SLOT(changeViewCenter(int)));
+	connect(astreField, SIGNAL(nbAstreChanged(int)), this, SLOT(fillViewCenter()));
+	
+
+	//QComboBox* viewPlanetList = new QComboBox;
+	
+	viewLayout->addWidget(viewCenter);
+
+//	viewLayout->addWidget(viewPlanetList);
+
+	
 	AstreProperties* widProp = new AstreProperties();
 	
 	QHBoxLayout *topLayout = new QHBoxLayout;
@@ -90,6 +115,7 @@ GameBoard::GameBoard(QWidget *parent)
 	
 	QVBoxLayout *leftLayout = new QVBoxLayout;
 	leftLayout->addWidget(widProp);
+	leftLayout->addLayout(viewLayout);
 	//leftLayout->addWidget(force);
 	
 	QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -142,4 +168,22 @@ GameBoard::GameBoard(QWidget *parent)
 		cannonField->newTarget();
 	}*/
 
+void GameBoard::fillViewCenter(){
+	//std::cout<<"fillViewCenter"<<endl;
+	viewCenter->clear();
 
+	viewCenter->addItem(tr("on gravity center"), -3);
+	viewCenter->addItem(tr("on biggest planet"), -2);
+	viewCenter->addItem(tr("global"), -1);
+	
+	char str[256];
+	if(sys != NULL) 
+		//for(int i=0: i<viewCenter->size()i++)
+		for(vector<Astre>::iterator a=sys->astre.begin(); a != sys->astre.end(); a++)
+			if(a->m >0)
+			{
+				sprintf(str, "%s %d", "on planet", a->num);
+				cout<<"add Item "<<a->num<<endl;
+				viewCenter->addItem(str, a->num);
+			}
+}

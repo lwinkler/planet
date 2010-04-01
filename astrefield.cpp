@@ -48,7 +48,7 @@
 #include <QTimer>
 
 #include <QApplication>
-
+#include <QTransform>
 #include <math.h>
 #include <stdlib.h>
 
@@ -57,9 +57,29 @@
 
 #include "iostream"
 
+#define MIN(a,b) ((a)<(b))?(a):(b)
+#define MAX(a,b) ((a)>(b))?(a):(b)
+
 using namespace std;
 
 const int AstreField::timerInterval=20;
+const Qt::GlobalColor AstreField::colors[15]={
+	Qt::red,
+	Qt::darkRed,
+	Qt::green,
+	Qt::darkGreen,
+	Qt::blue,
+	Qt::darkBlue,
+	Qt::cyan,
+	Qt::darkCyan,
+	Qt::magenta,
+	Qt::darkMagenta,
+	Qt::yellow,
+	Qt::darkYellow,
+	Qt::gray,
+	Qt::darkGray,
+	Qt::lightGray
+};
 
 AstreField::AstreField(QWidget *parent)
 : QWidget(parent)
@@ -74,6 +94,9 @@ AstreField::AstreField(QWidget *parent)
 	setAutoFillBackground(true);
 	//newTarget();
 	//sys=new System;
+
+	dispScale=0.5;
+	dispCenter=QPointF(0,0);
 	
 	init();
 
@@ -173,6 +196,28 @@ void AstreField::pauseSimulation()
 	//paintEvent(NULL);
 }
 
+void AstreField::changeViewCenter(int index)
+{
+	centerView = index - 3;
+	
+	/*if(centerView >= 0){
+		int tmp=centerView;
+		vector<Astre>::iterator a;
+		int i=0;
+		for(a=sys.astre.begin(); a != sys.astre.end() && tmp>0; a++, i++)
+			if(a->m > 0) tmp--;
+		centerView = i;
+	}*/
+	
+	cout<<"change view center"<<index<<" "<<centerView<<endl;
+	update();
+}
+
+void AstreField::changeViewScale(int index)
+{
+	scaleView = index;
+}
+
 void AstreField::moveSys()
 {
 	//QRegion region = QRect();
@@ -180,8 +225,10 @@ void AstreField::moveSys()
 	for(unsigned int i =0; i< sys.astre.size(); i++){
 		++timerCount;
 		
-		sys.ComputeSpeed();
+		int nbCollision = sys.ComputeSpeed();
 		sys.Move();
+		if(nbCollision > 0)
+			emit nbAstreChanged(sys.NbAstre());
 		
 		QRect astreRect = QRect(-sys.astre[i].r/2 , sys.astre[i].r/2, -sys.astre[i].r/2 , sys.astre[i].r/2);
 		astreRect.moveCenter(QPoint(sys.astre[i].x, sys.astre[i].y));
@@ -204,10 +251,22 @@ void AstreField::moveSys()
 
 void AstreField::mousePressEvent(QMouseEvent *event)
 {
-/*	if (event->button() != Qt::LeftButton)
+	if (event->button() != Qt::LeftButton)
 		return;
-	if (barrelHit(event->pos()))
-		barrelPressed = true;*/
+	QPoint pos = event->pos();
+	
+	QTransform matrix;
+	matrix.scale(dispScale, dispScale);
+	matrix.translate(-dispCenter.x(), -dispCenter.y());
+	matrix.translate(width()/2/dispScale , height()/2/dispScale);
+	QTransform invmat;
+	invmat  = matrix.inverted();
+	QPointF posSys = pos * invmat;
+	
+	newAstre.x=posSys.x();
+	newAstre.y=posSys.y();
+	
+	timerCountNewAstre = timerCount;
 }
 
 void AstreField::mouseMoveEvent(QMouseEvent *event)
@@ -225,6 +284,36 @@ void AstreField::mouseMoveEvent(QMouseEvent *event)
 
 void AstreField::mouseReleaseEvent(QMouseEvent *event)
 {
+	if (event->button() != Qt::LeftButton)
+		return;
+	QPoint pos = event->pos();
+	
+	QTransform matrix;
+	matrix.scale(dispScale, dispScale);
+	matrix.translate(-dispCenter.x(), -dispCenter.y());
+	matrix.translate(width()/2/dispScale , height()/2/dispScale);
+	QTransform invmat;
+	invmat  = matrix.inverted();
+	QPointF posSys = pos * invmat;
+	timerCountNewAstre = timerCount - timerCountNewAstre;
+	
+	float vx= (posSys.x() - newAstre.x) / (timerCountNewAstre * Astre::dt);
+	float vy= (posSys.y() - newAstre.y) / (timerCountNewAstre * Astre::dt);
+	
+	if(timerCountNewAstre==0)vx=vy=0; // If simulation stopped
+	
+	newAstre.m=6e10;
+	newAstre.r=pow(newAstre.m/6e12, 0.333)*20;
+	newAstre.x=posSys.x();
+	newAstre.y=posSys.y();
+	newAstre.vx=vx;
+	newAstre.vy=vy;
+	sys.AddAstre(newAstre);
+	newAstre.m=0;
+	
+	emit nbAstreChanged(sys.NbAstre());
+	update();
+
 //	if (event->button() == Qt::LeftButton)
 //		barrelPressed = false;
 }
@@ -237,21 +326,64 @@ void AstreField::paintEvent(QPaintEvent * /* event */)
 	QPainter painter(this);
 	painter.setBackground(Qt::black);
 	
-
-	for (unsigned int i=0; i < sys.astre.size(); i++)
-		paintAstre(painter, &sys.astre[i]);
+	float x = 0;
+	float y = 0;
+	float x1,y1,x2,y2;
 	
+	//cout<<"aaaachange view center"<<centerView<<endl;	
+	dispScale = 0;
+	if(centerView== -3)
+	{
+		sys.GetGravityCenter(x,y);
+		dispCenter = QPointF(x,y);
+	}
+	else if(centerView== -2)
+	{
+		sys.GetBiggestAstrePosition(x,y);
+		dispCenter = QPointF(x,y);
+	}
+	else if(centerView== -1)
+	{
+		sys.GetBorders(x1,y1,x2,y2);
+		dispCenter = QPointF((x1+x2)/2,(y1+y2)/2);
+		dispScale = Astre::SetInRange(MIN(width()/(x2-x1), height()/(y2-y1)), 0.01, 1);
+	}else {
+		if(sys.astre[centerView].m > 0){
+			x= sys.astre[centerView].x;
+			y= sys.astre[centerView].y;
+		}else{
+			sys.GetBiggestAstrePosition(x,y);
+		}
+		dispCenter = QPointF(x,y);
+	}
+	if(dispScale == 0)dispScale = 0.3;
+	
+	QTransform matrix;
+	matrix.scale(dispScale, dispScale);
+	matrix.translate(-dispCenter.x(), -dispCenter.y());
+	matrix.translate(width()/2/dispScale , height()/2/dispScale);
+	
+	painter.setWorldTransform(matrix);
+
+	for(vector<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++)
+		paintAstre(painter, *a);
+	
+	if(newAstre.m > 0 ) paintAstre(painter, newAstre);
 }
 
-void AstreField::paintAstre(QPainter &painter, Astre* astre)
+void AstreField::paintAstre(QPainter &painter, const Astre& astre)
 {
-	if(astre->m>0){
-		painter.setPen(Qt::NoPen);
-		painter.setBrush(Qt::black);
-		painter.setBackground(Qt::black);
-		painter.drawEllipse(QPointF(astre->x, astre->y), astre->r, astre->r);
+	if(astre.m>0){
+		painter.setPen(Qt::black);
+		painter.setBrush(colors[astre.num % 15]);
+		//painter.setBackground(Qt::black);
+		
+		
+		painter.drawEllipse(QPointF(astre.x, astre.y), astre.r, astre.r);
 	}
 }
+
+
 void AstreField::init()
 {
 	timerCount = 0;
@@ -267,7 +399,7 @@ void AstreField::init()
 		astre.vy=0;
 		sys.AddAstre(astre);
 	}
-	{
+	/*{
 		Astre astre;
 		astre.m=1e10;
 		astre.r=pow(astre.m/6e12, 0.333)*20;
@@ -296,7 +428,7 @@ void AstreField::init()
 		astre.vx=-1;
 		astre.vy=2;
 		sys.AddAstre(astre);
-	}
+	}*/
 	
 	update();
 }
