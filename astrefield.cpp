@@ -95,8 +95,9 @@ AstreField::AstreField(QWidget *parent)
 	//newTarget();
 	//sys=new System;
 
-	dispScale=0.5;
+	dispScale=1;
 	dispCenter=QPointF(0,0);
+	cptAstre=0;
 	
 	init();
 
@@ -151,6 +152,8 @@ void AstreField::changeViewCenter(int index)
 void AstreField::changeViewScale(int index)
 {
 	scaleView = index;
+	dispScale = scaleView / 100.0;
+	update();
 }
 
 void AstreField::moveSys()
@@ -161,8 +164,8 @@ void AstreField::moveSys()
 	
 	int nbCollision = sys.ComputeSpeed();
 	//setUpdatesEnabled(false);
-	sys.Move();
-	if(nbCollision > 0)
+	int nbRemoved = sys.Move();
+	if(nbCollision > 0 || nbRemoved > 0)
 		emit nbAstreChanged(sys.NbAstre());
 	for(ARR<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++){
 		
@@ -200,8 +203,8 @@ void AstreField::mousePressEvent(QMouseEvent *event)
 	invmat  = matrix.inverted();
 	QPointF posSys = pos * invmat;
 	
-	newAstre.x=posSys.x();
-	newAstre.y=posSys.y();
+	newAstre_x=posSys.x();
+	newAstre_y=posSys.y();
 	
 	timerCountNewAstre = timerCount;
 }
@@ -234,18 +237,16 @@ void AstreField::mouseReleaseEvent(QMouseEvent *event)
 	QPointF posSys = pos * invmat;
 	timerCountNewAstre = timerCount - timerCountNewAstre;
 	
-	float vx= (posSys.x() - newAstre.x) / (timerCountNewAstre * Astre::dt);
-	float vy= (posSys.y() - newAstre.y) / (timerCountNewAstre * Astre::dt);
+	float vx= (posSys.x() - newAstre_x) / (timerCountNewAstre * Astre::dt);
+	float vy= (posSys.y() - newAstre_y) / (timerCountNewAstre * Astre::dt);
 	
 	if(timerCountNewAstre==0)vx=vy=0; // If simulation stopped
 	
-	newAstre.m=6e10;
-	newAstre.r=pow(newAstre.m/6e12, 0.333)*20;
-	newAstre.x=posSys.x();
-	newAstre.y=posSys.y();
-	newAstre.vx=vx;
-	newAstre.vy=vy;
+	float m=6e10;
+	float r=pow(m/6e12, 0.333)*20;
+	Astre newAstre(m, r, posSys.x(), posSys.y(), vx, vy, "planet " + cptAstre);
 	sys.AddAstre(newAstre);
+	cptAstre++;
 	newAstre.m=0;
 	
 	emit nbAstreChanged(sys.NbAstre());
@@ -268,7 +269,7 @@ void AstreField::paintEvent(QPaintEvent * /* event */)
 	float x1,y1,x2,y2;
 	
 	//cout<<"aaaachange view center"<<centerView<<endl;	
-	dispScale = 0;
+	//dispScale = 0;
 	if(centerView== -3)
 	{
 		sys.GetGravityCenter(x,y);
@@ -305,7 +306,7 @@ void AstreField::paintEvent(QPaintEvent * /* event */)
 	for(ARR<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++)
 		paintAstre(painter, *a);
 	
-	if(newAstre.m > 0 ) paintAstre(painter, newAstre);
+//	if(newAstre.m > 0 ) paintAstre(painter, newAstre);
 }
 
 void AstreField::paintAstre(QPainter &painter, const Astre& astre)
@@ -327,16 +328,18 @@ void AstreField::init()
 	dispTimer->stop();
 	sys.astre.resize(0);
 	{
-		Astre astre;
-		astre.m=6e13;
-		astre.r=pow(astre.m/6e12, 0.333)*20;
-		astre.x=150;
-		astre.y=150;
-		astre.vx=0;
-		astre.vy=0;
+		float m=6e13;
+		float r=pow(m/6e12, 0.333)*20;
+		float x=150;
+		float y=150;
+		float vx=0;
+		float vy=0;
+		string name = "planet " + cptAstre;
+		Astre astre(m, r, x, y, vx, vy, name);
 		sys.AddAstre(astre);
+		cptAstre++;
 	}
-	
+	emit nbAstreChanged(sys.NbAstre());
 	update();
 }
 /*

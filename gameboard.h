@@ -45,11 +45,12 @@
 #define GAMEBOARD_H
 
 #include <QWidget>
-#include <QComboBox>
 
 class QLCDNumber;
+class QComboBox;
 class System;
 class AstreField;
+
 
 class GameBoard : public QWidget
 {
@@ -63,13 +64,14 @@ class GameBoard : public QWidget
 		void hit();
 		void missed();
 		void newGame();*/
-		void fillViewCenter();
+		void fillViewCenter(int nb);
 		
 		
 private:
 		//QLCDNumber *hits;
 		//QLCDNumber *shotsLeft;
 		QComboBox* viewCenter;
+		QLCDNumber* number;
 		System * sys;
 		AstreField * astreField;
 };

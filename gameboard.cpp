@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QComboBox>
+#include <QSpinBox>
 #include <QShortcut>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -24,44 +25,17 @@ using namespace std;
 GameBoard::GameBoard(QWidget *parent)
 : QWidget(parent)
 {
+	astreField = new AstreField;
+	sys= &astreField->sys;
+	
+	QFrame *astreBox = new QFrame;
+	astreBox->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
+
 	QPushButton *quit = new QPushButton(tr("&Quit"));
 	quit->setFont(QFont("Times", 18, QFont::Bold));
 	
 	connect(quit, SIGNAL(clicked()), qApp, SLOT(quit()));
-	
-	/*LCDRange *angle = new LCDRange(tr("ANGLE"));
-	angle->setRange(5, 70);
-	
-	LCDRange *force = new LCDRange(tr("FORCE"));
-	force->setRange(10, 50);
-	*/
-	QFrame *cannonBox = new QFrame;
-	cannonBox->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
-	
-	astreField = new AstreField;
-	sys= &astreField->sys;
-	
-	/*connect(angle, SIGNAL(valueChanged(int)),
-	cannonField, SLOT(setAngle(int)));
-	connect(cannonField, SIGNAL(angleChanged(int)),
-	angle, SLOT(setValue(int)));
-	
-	connect(force, SIGNAL(valueChanged(int)),
-	cannonField, SLOT(setForce(int)));
-	connect(cannonField, SIGNAL(forceChanged(int)),
-	force, SLOT(setValue(int)));
-	
-	connect(cannonField, SIGNAL(hit()),
-	this, SLOT(hit()));
-	connect(cannonField, SIGNAL(missed()),
-	this, SLOT(missed()));*/
-	
-	QPushButton *shoot = new QPushButton(tr("&Shoot"));
-	shoot->setFont(QFont("Times", 18, QFont::Bold));
-	
-	//connect(shoot, SIGNAL(clicked()),this, SLOT(fire()));
-	//connect(cannonField, SIGNAL(canShoot(bool)),shoot, SLOT(setEnabled(bool)));
-	
+		
 	QPushButton *restart = new QPushButton(tr("&New Simulation"));
 	restart->setFont(QFont("Times", 18, QFont::Bold));
 	connect(restart, SIGNAL(clicked()), astreField, SLOT(init()));
@@ -71,32 +45,44 @@ GameBoard::GameBoard(QWidget *parent)
 	
 	connect(pause, SIGNAL(clicked()), astreField, SLOT(pauseSimulation()));
 	
-	//hits = new QLCDNumber(2);
 	//hits->setSegmentStyle(QLCDNumber::Filled);
 	
 	//shotsLeft = new QLCDNumber(2);
 	//shotsLeft->setSegmentStyle(QLCDNumber::Filled);
 	
-	QLabel *hitsLabel = new QLabel(tr("HITS"));
-	QLabel *shotsLeftLabel = new QLabel(tr("SHOTS LEFT"));
+	QLabel* numberLabel = new QLabel(tr("PLANETS"));
+	number = new QLCDNumber(3);
+	
+	//QLabel *shotsLeftLabel = new QLabel(tr("SHOTS LEFT"));
 	
 	//(void) new QShortcut(Qt::Key_Enter, this, SLOT(fire()));
 	//(void) new QShortcut(Qt::Key_Return, this, SLOT(fire()));
 	//(void) new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close()));
 	
 	/// View layout
-	QHBoxLayout *viewLayout = new QHBoxLayout;
-	QLabel* viewTitle = new QLabel(tr("Center"));
-	viewLayout->addWidget(viewTitle);
-	viewCenter = new QComboBox;
-	fillViewCenter();
-	connect(viewCenter, SIGNAL(activated(int)), astreField, SLOT(changeViewCenter(int)));
-	connect(astreField, SIGNAL(nbAstreChanged(int)), this, SLOT(fillViewCenter()));
+	QHBoxLayout *viewLayout = new QHBoxLayout();
 	
-
+	QLabel* viewCenterLab = new QLabel(tr("Center"));
+	viewCenter = new QComboBox;
+	fillViewCenter(1);
+	connect(viewCenter, SIGNAL(activated(int)), astreField, SLOT(changeViewCenter(int)));
+	connect(astreField, SIGNAL(nbAstreChanged(int)), this, SLOT(fillViewCenter(int)));
+	QLabel* viewScaleLab = new QLabel(tr("Scale"));
+	QSpinBox* viewScaleBox= new QSpinBox();
+	viewScaleBox->setMinimum(1);
+	viewScaleBox->setMaximum(1000);
+	viewScaleBox->setAccelerated(true);
+	viewScaleBox->setSingleStep(1);
+	viewScaleBox->setValue(100);
+	viewScaleBox->setSuffix("%");
+	connect(viewScaleBox, SIGNAL(valueChanged(int)), astreField, SLOT(changeViewScale(int)));
+	
 	//QComboBox* viewPlanetList = new QComboBox;
 	
+	viewLayout->addWidget(viewCenterLab);
 	viewLayout->addWidget(viewCenter);
+	viewLayout->addWidget(viewScaleLab);
+	viewLayout->addWidget(viewScaleBox);
 
 //	viewLayout->addWidget(viewPlanetList);
 
@@ -105,10 +91,10 @@ GameBoard::GameBoard(QWidget *parent)
 	
 	QHBoxLayout *topLayout = new QHBoxLayout;
 	//topLayout->addWidget(shoot);
-	//topLayout->addWidget(hits);
-	topLayout->addWidget(hitsLabel);
+	topLayout->addWidget(numberLabel);
+	topLayout->addWidget(number);
 	//topLayout->addWidget(shotsLeft);
-	topLayout->addWidget(shotsLeftLabel);
+//	topLayout->addWidget(shotsLeftLabel);
 	topLayout->addStretch(1);
 	topLayout->addWidget(restart);
 	topLayout->addWidget(pause);
@@ -120,13 +106,13 @@ GameBoard::GameBoard(QWidget *parent)
 	
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 	mainLayout->addWidget(astreField);
-	cannonBox->setLayout(mainLayout);
+	astreBox->setLayout(mainLayout);
 	
 	QGridLayout *gridLayout = new QGridLayout;
 	gridLayout->addWidget(quit, 0, 0);
 	gridLayout->addLayout(topLayout, 0, 1);
 	gridLayout->addLayout(leftLayout, 1, 0);
-	gridLayout->addWidget(cannonBox, 1, 1, 2, 1);
+	gridLayout->addWidget(astreBox, 1, 1, 2, 1);
 	gridLayout->setColumnStretch(1, 10);
 	setLayout(gridLayout);
 	
@@ -168,7 +154,7 @@ GameBoard::GameBoard(QWidget *parent)
 		cannonField->newTarget();
 	}*/
 
-void GameBoard::fillViewCenter(){
+void GameBoard::fillViewCenter(int nb){
 	//std::cout<<"fillViewCenter"<<endl;
 	viewCenter->clear();
 
@@ -185,4 +171,7 @@ void GameBoard::fillViewCenter(){
 				//cout<<"add Item "<<a->num<<endl;
 				viewCenter->addItem(str, a->num);
 			}
+	
+	number->display(sys->NbAstre());
+	update();
 }

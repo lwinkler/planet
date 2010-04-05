@@ -112,6 +112,7 @@ class AstreField : public QWidget
 		int centerView;
 		std::ARR<Astre>::iterator centerViewAstre;
 		int scaleView;
+		int cptAstre;
 		QTimer *dispTimer;
 		//float shootAngle;
 		//float shootForce;
@@ -121,13 +122,15 @@ class AstreField : public QWidget
 		//bool gameEnded;
 		//bool barrelPressed;
 		
+		//Astre newAstre;
+		float newAstre_x;
+		float newAstre_y;
+		int timerCountNewAstre;
+		QPointF dispCenter;
+		float dispScale;
+
 	public:
 		System sys;
-		Astre newAstre;
-		int timerCountNewAstre;
-		float dispScale;
-		QPointF dispCenter;
-
 		
 		static const int timerInterval;
 		static const Qt::GlobalColor colors[15];

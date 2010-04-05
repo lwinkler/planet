@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <list>
+#include <string>
 
 #define ARR list
 
@@ -16,14 +17,19 @@ class System{
 		System();
 		~System();
 		int ComputeSpeed();
-		void Move();
+		int Move();
 		void AddAstre(Astre& a);
 		int NbAstre();
 		
-		void GetGravityCenter(float& x, float& y);
+		void GetGravityCenter(float& _x, float& _y) {_x=gx; _y=gy;};
 		void GetBiggestAstrePosition(float& x, float& y);
 		void GetBorders(float& x1, float& y1, float& x2, float& y2);
-		int nb;
+	
+		static const float distMax;
+	private:
+		int cpt;
+		float gx;
+		float gy;
 };
 
 class Astre{
@@ -33,12 +39,25 @@ class Astre{
 
 	public:
 		Astre();
+		Astre(float m, float r, float x, float y, float vx, float vy, std::string name);
+
 		~Astre();
 		Astre& operator=(const Astre& a);
 		
 		void ComputeForce(System& sys, int& nbCollision);
 		void ComputeSpeed();
 		void Move();
+		
+		
+		inline void GetPosition(float& _x, float& _y){ x=_x ; y=_y;};
+		inline float GetMass() {return m;};
+		inline float GetRadius() {return r;};
+		
+		inline std::string GetName() { return name; };
+		inline void SetName(std::string _name) {name=_name; };
+		inline int GetNumber() { return num; };
+		inline void SetNumber(int _num) { num = _num; };
+		inline void ResetForce() {fx=fy=0;};
 		
 		inline static float SetInRange(float x, float min, float max){
 			if(x < min)return min;
@@ -49,9 +68,7 @@ class Astre{
 		static const float cG;
 		static const float dt;
 		
-		int type;
-		int color;
-		int num;
+		std::string name;
 		float m;
 		float r;
 		float x;
@@ -60,6 +77,9 @@ class Astre{
 		float vy;
 		float fx;
 		float fy;
+		//int type;
+		//int color;
+		int num;
 
 };
 

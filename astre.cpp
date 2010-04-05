@@ -8,29 +8,48 @@ using namespace std;
 
 const float Astre::cG=6.67e-11;
 const float Astre::dt=1;//10e4;
+const float System::distMax=10000;//10e4;
 
 Astre::Astre(){// : sys(system){
-	type=0;
+	//type=0;
 	m=0;
 	r=0;
 	x=0;
 	y=0;
 	vx=0;
 	vy=0;
+	num=0;
+	name="";
+	fx=0;
+	fy=0;
 	//cout<<"size in Astre"<<sys->nb<<" "<<sys->astre.size()<<endl;
+}
+
+Astre::Astre(float _m, float _r, float _x, float _y, float _vx, float _vy, std::string _name){
+	m=_m;
+	r=_r;
+	x=_x;
+	y=_y;
+	vx=_vx;
+	vy=_vy;
+	num=0;
+	name=_name;
+	fx=0;
+	fy=0;
 }
 
 Astre::~Astre(){
 }
 
 Astre& Astre::operator=(const Astre& a){
-	type=a.type;
+//	type=a.type;
 	m=a.m;
 	r=a.r;
 	x=a.r;
 	y=a.y;
 	vx=a.vx;
 	vy=a.vy;
+	name=a.name;
 	fx=a.fx;
 	fy=a.fy;
 	
@@ -62,7 +81,7 @@ void Astre::ComputeForce(System& sys, int& nbCollisions){
 			if(dist < r + a->r){
 				//Collision
 				nbCollisions++;
-				sys.nb--;
+				//sys.nb--;
 				if(a->m > m)
 					Collision(*a, *this);
 				else
@@ -105,26 +124,26 @@ void Astre::Collision(Astre& big, Astre& small){
 }
 
 System::System(){
-	nb=0;
+	cpt=0;
 //	cout<<"size "<<astre.size()<<endl;
 }
 System::~System(){}
 
 void System::AddAstre(Astre& a){
-	nb++;
-	a.num=astre.size();
+	cpt++;
+	
+	a.SetNumber(cpt);//astre.size();
 	astre.push_back(a);
 }
 
 int System::NbAstre(){
-	return nb;
+	return astre.size();
 }
 
 int System::ComputeSpeed(){
 	int nbCollision=0;
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++){
-		a->fx=0;
-		a->fy=0;
+		a->ResetForce();
 	}
 	
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++){
@@ -141,31 +160,37 @@ int System::ComputeSpeed(){
 	return nbCollision;
 }
 
-void System::Move(){
+int System::Move(){
+	
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 		a->Move();
-	
-	ARR<Astre>::iterator a = astre.begin();
-	while(a != astre.end())
-		if(a->m <= 0)a = astre.erase(a);
-		else a++;
-}
-
-void System::GetGravityCenter(float& x, float& y)
-{
-	x=0;
-	y=0;
+	int removed=0;
+	gx=0;
+	gy=0;
 	float m=0;
+	
+	// Compute mass centre
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 	{
 		if(a->m >0){
-			x+= a->m * a->x;
-			y+= a->m * a->y;
+			gx+= a->m * a->x;
+			gy+= a->m * a->y;
 			m+= a->m;
 		}
 	}
-	x/=m;
-	y/=m;
+	gx/=m;
+	gy/=m;
+	
+	ARR<Astre>::iterator aa = astre.begin();
+	static float sqdist= distMax * distMax;
+	while(aa != astre.end() )
+		if(aa->m <= 0 || (aa->x - gx)*(aa->x - gx) + (aa->y - gy)*(aa->y - gy) > sqdist){
+			aa = astre.erase(aa);
+			removed++;
+		}
+		else aa++;
+		
+	return removed;
 }
 
 void System::GetBiggestAstrePosition(float& x, float& y)
@@ -198,3 +223,4 @@ void System::GetBorders(float& x1, float& y1, float& x2, float& y2)
 		}
 	}
 }
+
