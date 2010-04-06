@@ -88,34 +88,13 @@ AstreField::AstreField(QWidget *parent)
 	dispTimer = new QTimer(this);
 	connect(dispTimer, SIGNAL(timeout()), this, SLOT(moveSys()));
 	
-	setPalette(QPalette(QColor(250, 250, 200)));
+	setPalette(QPalette(QColor(0, 0, 0)));
 	setAutoFillBackground(true);
-	setPalette(QPalette(QColor(250, 250, 200)));
-	setAutoFillBackground(true);
-	//newTarget();
-	//sys=new System;
 
 	dispScale=1;
 	dispCenter=QPointF(0,0);
-	cptAstre=0;
 	
 	init();
-
-	
-//	setUpdatesEnabled(true);
-
-	//update();	
-	
-	/*QPainter painter(this);
-	painter.setBackground(Qt::black);
-	
-
-	painter.setPen(Qt::black);
-	painter.setBrush(Qt::red);
-	painter.setBackground(Qt::black);
-	painter.drawEllipse(QPointF(33,33), 4, 40);*/
-	//cout<<"end of field init"<<endl;
-	//activateWindow();
 }
 
 AstreField::~AstreField(){
@@ -131,21 +110,12 @@ void AstreField::pauseSimulation()
 void AstreField::changeViewCenter(int index)
 {
 	centerView = index - 3;
-	
-	/*if(centerView >= 0){
-		int tmp=centerView;
-		vector<Astre>::iterator a;
-		int i=0;
-		for(a=sys.astre.begin(); a != sys.astre.end() && tmp>0; a++, i++)
-			if(a->m > 0) tmp--;
-		centerView = i;
-	}*/
 	centerViewAstre = sys.astre.begin();
 	if(centerView >= 0)
 		for(int i=0; i<centerView;i++)
 			centerViewAstre++;
 		
-	cout<<"change view center"<<index<<" "<<centerView<<endl;
+	//cout<<"change view center"<<index<<" "<<centerView<<endl;
 	update();
 }
 
@@ -185,16 +155,12 @@ void AstreField::moveSys()
 		//}
 		//update(region);
 	}
-	//setUpdatesEnabled(true);
 	update();
 }
 
 void AstreField::mousePressEvent(QMouseEvent *event)
 {
-	if (event->button() != Qt::LeftButton)
-		return;
-	QPoint pos = event->pos();
-	
+	QPoint pos = event->pos();	
 	QTransform matrix;
 	matrix.scale(dispScale, dispScale);
 	matrix.translate(-dispCenter.x(), -dispCenter.y());
@@ -202,11 +168,24 @@ void AstreField::mousePressEvent(QMouseEvent *event)
 	QTransform invmat;
 	invmat  = matrix.inverted();
 	QPointF posSys = pos * invmat;
-	
-	newAstre_x=posSys.x();
-	newAstre_y=posSys.y();
-	
-	timerCountNewAstre = timerCount;
+
+	if (event->button() == Qt::RightButton)
+	{
+		// Add a planet
+		
+		newAstre_x=posSys.x();
+		newAstre_y=posSys.y();
+		
+		timerCountNewAstre = timerCount;
+	}
+	else if (event->button() == Qt::LeftButton)
+	{
+		// Select a planet for properties
+		Astre astre; 
+		int num = sys.FindAstreAtPosition(posSys.x(), posSys.y(), astre);
+		emit astreSelected(num, astre);
+		
+	}
 }
 
 void AstreField::mouseMoveEvent(QMouseEvent *event)
@@ -224,7 +203,7 @@ void AstreField::mouseMoveEvent(QMouseEvent *event)
 
 void AstreField::mouseReleaseEvent(QMouseEvent *event)
 {
-	if (event->button() != Qt::LeftButton)
+	if (event->button() != Qt::RightButton)
 		return;
 	QPoint pos = event->pos();
 	
@@ -242,8 +221,8 @@ void AstreField::mouseReleaseEvent(QMouseEvent *event)
 	
 	if(timerCountNewAstre==0)vx=vy=0; // If simulation stopped
 	
-	float m=6e10;
-	float r=pow(m/6e12, 0.333)*20;
+	float m=6.;
+	float r=pow(m/60.0, 0.333)*20;
 	Astre newAstre(m, r, posSys.x(), posSys.y(), vx, vy, "planet " + cptAstre);
 	sys.AddAstre(newAstre);
 	cptAstre++;
@@ -252,24 +231,19 @@ void AstreField::mouseReleaseEvent(QMouseEvent *event)
 	emit nbAstreChanged(sys.NbAstre());
 	update();
 
-//	if (event->button() == Qt::LeftButton)
-//		barrelPressed = false;
 }
 
 void AstreField::paintEvent(QPaintEvent * /* event */)
 {
-	
-	//exit(-1);
-	//cout<<"paintEvent"<<endl;
 	QPainter painter(this);
 	painter.setBackground(Qt::black);
+	painter.setBrush(Qt::black);
+	//painter.drawRect(QRect(0, 0, width(), height()));
 	
 	float x = 0;
 	float y = 0;
 	float x1,y1,x2,y2;
 	
-	//cout<<"aaaachange view center"<<centerView<<endl;	
-	//dispScale = 0;
 	if(centerView== -3)
 	{
 		sys.GetGravityCenter(x,y);
@@ -312,7 +286,7 @@ void AstreField::paintEvent(QPaintEvent * /* event */)
 void AstreField::paintAstre(QPainter &painter, const Astre& astre)
 {
 	if(astre.m>0){
-		painter.setPen(Qt::black);
+		painter.setPen(colors[astre.num % 15]);
 		painter.setBrush(colors[astre.num % 15]);
 		//painter.setBackground(Qt::black);
 		
@@ -324,14 +298,15 @@ void AstreField::paintAstre(QPainter &painter, const Astre& astre)
 
 void AstreField::init()
 {
+	cptAstre=0;
 	timerCount = 0;
 	dispTimer->stop();
-	sys.astre.resize(0);
+	sys.Reset();
 	{
-		float m=6e13;
-		float r=pow(m/6e12, 0.333)*20;
-		float x=150;
-		float y=150;
+		float m=600;
+		float r=pow(m/60.0, 0.333)*20;
+		float x=0;
+		float y=0;
 		float vx=0;
 		float vy=0;
 		string name = "planet " + cptAstre;
@@ -342,72 +317,15 @@ void AstreField::init()
 	emit nbAstreChanged(sys.NbAstre());
 	update();
 }
-/*
-void AstreField::paintTarget(QPainter &painter)
-{
-	painter.setPen(Qt::black);
-	painter.setBrush(Qt::red);
-	painter.drawRect(targetRect());
+
+void AstreField::astreChanged(int num, const Astre& astre1){
+	
+	for(ARR<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++){
+		if(a->num == num) {
+			a->m = astre1.m;
+			a->r = astre1.r;
+		}
 	}
-	
-	void AstreField::paintBarrier(QPainter &painter)
-	{
-		painter.setPen(Qt::black);
-		painter.setBrush(Qt::yellow);
-		painter.drawRect(barrierRect());
-	}
-	
-	const QRect barrelRect(30, -5, 20, 10);
-	
-	void AstreField::paintCannon(QPainter &painter)
-	{
-		painter.setPen(Qt::NoPen);
-		painter.setBrush(Qt::blue);
-		
-		painter.save();
-		painter.translate(0, height());
-		painter.drawPie(QRect(-35, -35, 70, 70), 0, 90 * 16);
-		painter.rotate(-currentAngle);
-		painter.drawRect(barrelRect);
-		painter.restore();
-	}
-	
-	QRect AstreField::cannonRect() const
-	{
-		QRect result(0, 0, 50, 50);
-		result.moveBottomLeft(rect().bottomLeft());
-		return result;
-	}
-	
-	QRect AstreField::shotRect() const
-	{
-		const double gravity = 4;
-		
-		double time = timerCount / 20.0;
-		double velocity = shootForce;
-		double radians = shootAngle * 3.14159265 / 180;
-		
-		double velx = velocity * cos(radians);
-		double vely = velocity * sin(radians);
-		double x0 = (barrelRect.right() + 5) * cos(radians);
-		double y0 = (barrelRect.right() + 5) * sin(radians);
-		double x = x0 + velx * time;
-		double y = y0 + vely * time - 0.5 * gravity * time * time;
-		
-		QRect result(0, 0, 6, 6);
-		result.moveCenter(QPoint(qRound(x), height() - 1 - qRound(y)));
-		return result;
-	}
-	
-	QRect AstreField::targetRect() const
-	{
-		QRect result(0, 0, 20, 10);
-		result.moveCenter(QPoint(target.x(), height() - 1 - target.y()));
-		return result;
-	}
-	
-	QRect AstreField::barrierRect() const
-	{
-		return QRect(145, height() - 100, 15, 99);
-	}*/
+	update();
+}
 

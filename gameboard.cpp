@@ -20,6 +20,8 @@
 #include "gameboard.h"
 #include "widproperties.h"
 
+#include "astre.h"
+
 using namespace std;
 
 GameBoard::GameBoard(QWidget *parent)
@@ -88,6 +90,8 @@ GameBoard::GameBoard(QWidget *parent)
 
 	
 	AstreProperties* widProp = new AstreProperties();
+	connect(astreField, SIGNAL(astreSelected(int, const Astre&)), widProp, SLOT(setAstre(int, const Astre&)));
+	connect(widProp, SIGNAL(astreChanged(int, const Astre&)), astreField, SLOT(astreChanged(int, const Astre&)));
 	
 	QHBoxLayout *topLayout = new QHBoxLayout;
 	//topLayout->addWidget(shoot);

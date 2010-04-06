@@ -20,11 +20,12 @@ class System{
 		int Move();
 		void AddAstre(Astre& a);
 		int NbAstre();
+		void Reset();
 		
 		void GetGravityCenter(float& _x, float& _y) {_x=gx; _y=gy;};
 		void GetBiggestAstrePosition(float& x, float& y);
 		void GetBorders(float& x1, float& y1, float& x2, float& y2);
-	
+		int FindAstreAtPosition(float x, float y, Astre& a);
 		static const float distMax;
 	private:
 		int cpt;

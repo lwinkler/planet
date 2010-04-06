@@ -6,6 +6,7 @@
 #include "widproperties.h"
 #include <cmath>
 #include <iostream>
+#include <stdio.h>
 
 using namespace std;
 
@@ -21,54 +22,103 @@ AstreProperties::AstreProperties(const QString &text, QWidget *parent)
 	init();
 	//setText(text);
 }
-void AstreProperties::SetAstre(Astre* astre1){
-	astre=astre1;
+
+//void AstreProperties::SetAstre(Astre* astre1){
+	//astre=astre1;
+//}
+
+void AstreProperties::changeMass(int slider){
+	if(astre.num >= 0) {
+		char tmp[32];
+		float mass = ((float)slider);
+		astre.m= mass;
+		sprintf(tmp, "%f", mass);
+		dispMass->setText(tmp);
+		emit astreChanged(astre.num, astre);
+		update();
+	}
+	/*if(astre!=NULL){
+		astre->m=exp(mass);
+		
+	}
+	else cout<<"Error : No astre set !"<<endl;*/
 }
-void AstreProperties::changeMass(int mass){
-	if(astre!=NULL)astre->m=exp(mass);
-	else cout<<"Error : No astre set !"<<endl;
-}
-void AstreProperties::changeRadius(int radius){
+
+void AstreProperties::changeRadius(int slider){
+	if (astre.num >= 0) {
+		char tmp[32];
+		astre.r = slider;
+		sprintf(tmp, "%f", astre.r);
+		dispRadius->setText(tmp);
+		emit astreChanged(astre.num, astre);
+		update();
+	}
+	/*
 	if(astre!=NULL)astre->r=exp(radius);
-	else cout<<"Error : No astre set !"<<endl;
+	else cout<<"Error : No astre set !"<<endl;*/
 }
 
 void AstreProperties::init()
 {
-	QLCDNumber *lcdMass = new QLCDNumber(4);
-	lcdMass->setSegmentStyle(QLCDNumber::Filled);
+	astre.num = -1;
+	hide();
+	dispMass = new QLabel("0");
+	//lcdMass->setSegmentStyle(QLCDNumber::Filled);
 	
-	QLCDNumber *lcdRadius = new QLCDNumber(3);
-	lcdRadius->setSegmentStyle(QLCDNumber::Filled);
+	dispRadius = new QLabel("0");
+	//lcdRadius->setSegmentStyle(QLCDNumber::Filled);
 
 	sliderMass = new QSlider(Qt::Horizontal);
 	sliderMass->setRange(0, 9999);
-	sliderMass->setValue(100);
+	//sliderMass->setValue(100);
 	
 	sliderRadius = new QSlider(Qt::Horizontal);
 	sliderRadius->setRange(0, 999);
-	sliderRadius->setValue(10);
+	//sliderRadius->setValue(10);
 	
 	label = new QLabel;
 	label->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 	label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 	
 	connect(sliderMass, SIGNAL(valueChanged(int)),this, SLOT(changeMass(int)));
-	connect(sliderMass, SIGNAL(valueChanged(int)),lcdMass, SLOT(display(int)));
+	//connect(sliderMass, SIGNAL(valueChanged(int)),dispMass, SLOT(display(int)));
 	connect(sliderRadius, SIGNAL(valueChanged(int)),this, SLOT(changeRadius(int)));
-	connect(sliderRadius, SIGNAL(valueChanged(int)),lcdRadius, SLOT(display(int)));
+	//connect(sliderRadius, SIGNAL(valueChanged(int)),dispRadius, SLOT(display(int)));
 			
 	QVBoxLayout *layout = new QVBoxLayout;
 	layout->addWidget(label);
-	layout->addWidget(lcdMass);
+	layout->addWidget(dispMass);
 	layout->addWidget(sliderMass);
-	layout->addWidget(lcdRadius);
+	layout->addWidget(dispRadius);
 	layout->addWidget(sliderRadius);
 	setLayout(layout);
 			
 	setFocusProxy(sliderMass);
 	setUpdatesEnabled(true);
-	astre=NULL;
+	//astre=NULL;
+}
+
+void AstreProperties::setAstre(int num, const Astre& a)
+{
+	cout<<"setAstre"<<num<<endl;
+	if(num == -1) hide();
+	else{
+		show();
+		char tmp[32];
+		
+		astre = a;
+		astre.num = num;
+
+		sliderMass->setValue((a.m));
+		sliderRadius->setValue(a.r);
+		
+		/*sprintf(tmp, "%f", a.m);
+		dispMass->setText(tmp);
+		sprintf(tmp, "%f", a.r);
+		dispRadius->setText(tmp);*/
+		
+		update();
+	}
 }
 
 /*int AstreProperties::value() const

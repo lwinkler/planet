@@ -6,7 +6,7 @@
 
 using namespace std;
 
-const float Astre::cG=6.67e-11;
+const float Astre::cG=6.67;//6.67e-11;
 const float Astre::dt=1;//10e4;
 const float System::distMax=10000;//10e4;
 
@@ -18,7 +18,7 @@ Astre::Astre(){// : sys(system){
 	y=0;
 	vx=0;
 	vy=0;
-	num=0;
+	num=-1;
 	name="";
 	fx=0;
 	fy=0;
@@ -32,7 +32,7 @@ Astre::Astre(float _m, float _r, float _x, float _y, float _vx, float _vy, std::
 	y=_y;
 	vx=_vx;
 	vy=_vy;
-	num=0;
+	num=-1;
 	name=_name;
 	fx=0;
 	fy=0;
@@ -45,10 +45,11 @@ Astre& Astre::operator=(const Astre& a){
 //	type=a.type;
 	m=a.m;
 	r=a.r;
-	x=a.r;
+	x=a.x;
 	y=a.y;
 	vx=a.vx;
 	vy=a.vy;
+	//num=-1;//a.num;
 	name=a.name;
 	fx=a.fx;
 	fy=a.fy;
@@ -116,7 +117,7 @@ void Astre::Collision(Astre& big, Astre& small){
 	big.x= (big.x * big.m + small.x * small.m)/(big.m + small.m);
 	big.y= (big.y * big.m + small.y * small.m)/(big.m + small.m);
 	
-	big.r=pow((big.m + small.m)/6e12, 0.333)*20;//pow((pow(big.r, 3)+ pow(small.r, 3)),0.3333);
+	big.r=pow((pow(big.r, 3)+ pow(small.r, 3)),0.3333);//pow((big.m + small.m)/6e12, 0.333)*20;//
 	big.m+=small.m;
 	
 	small.m=0;
@@ -138,6 +139,11 @@ void System::AddAstre(Astre& a){
 
 int System::NbAstre(){
 	return astre.size();
+}
+
+void System::Reset(){
+	astre.resize(0);
+	cpt=0;
 }
 
 int System::ComputeSpeed(){
@@ -224,3 +230,17 @@ void System::GetBorders(float& x1, float& y1, float& x2, float& y2)
 	}
 }
 
+int System::FindAstreAtPosition(float x, float y, Astre& found){
+	
+	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
+	{
+		if(a->m > 0){
+			if((a->x - x)*(a->x - x) + (a->y - y) * (a->y - y) < a->r * a->r){
+				found = *a;
+				return a->num;
+			}
+		}
+	}
+	return -1;
+	
+}

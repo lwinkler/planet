@@ -79,11 +79,13 @@ class AstreField : public QWidget
 		void pauseSimulation();
 		void changeViewCenter(int index);
 		void changeViewScale(int index);
+		void astreChanged(int, const Astre& a);
 				
 	signals:
 		//void hit();
 		//void missed();
 		void nbAstreChanged(int nb);
+		void astreSelected(int num, const Astre& a);
 		//void forceChanged(int newForce);
 		//void canShoot(bool can);
 		

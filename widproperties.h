@@ -7,6 +7,7 @@
 
 class QLabel;
 class QSlider;
+class QLabel;
 
 class AstreProperties : public QWidget
 {
@@ -23,19 +24,23 @@ class AstreProperties : public QWidget
 		//void setValue(int value);
 		//void setRange(int minValue, int maxValue);
 		//void setText(const QString &text);
-		void SetAstre(Astre* astre1);
+		//void SetAstre(Astre* astre1);
 		void changeMass(int mass);
 		void changeRadius(int radius);
+		void setAstre(int num, const Astre&);
 		
 	signals:
+		void astreChanged(int num, const Astre astre);
 		//void valueChanged(int newValue);
 		
 	private:
-		Astre* astre;
+		Astre astre;
 		void init();
 		
 		QSlider *sliderMass;
 		QSlider *sliderRadius;
+		QLabel *dispMass;
+		QLabel *dispRadius;
 		QLabel *label;
 };
 
