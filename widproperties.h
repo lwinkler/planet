@@ -8,6 +8,7 @@
 class QLabel;
 class QSlider;
 class QLabel;
+class QCheckBox;
 
 class AstreProperties : public QWidget
 {
@@ -15,7 +16,7 @@ class AstreProperties : public QWidget
 	
 	public:
 		AstreProperties(QWidget *parent = 0);
-		AstreProperties(const QString &text, QWidget *parent = 0);
+		//AstreProperties(const QString &text, QWidget *parent = 0);
 		
 		//int value() const;
 		QString text() const;
@@ -36,12 +37,16 @@ class AstreProperties : public QWidget
 	private:
 		Astre astre;
 		void init();
+		void paintEvent(QPaintEvent*);
 		
 		QSlider *sliderMass;
 		QSlider *sliderRadius;
 		QLabel *dispMass;
 		QLabel *dispRadius;
 		QLabel *label;
+		QCheckBox *cbFixed;
+		bool settingMass; // If mass and radius linked
+		bool settingRadius;
 };
 
 #endif

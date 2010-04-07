@@ -5,6 +5,7 @@
 #include <vector>
 #include <list>
 #include <string>
+#include <cmath>
 
 #define ARR list
 
@@ -65,6 +66,8 @@ class Astre{
 			if(x > max)return max;
 			return x;
 		}
+		inline static float MassFromRadius(float r){return r*r*r /125.;};
+		inline static float RadiusFromMass(float m){return std::pow(m, 0.333) * 5.;};
 		
 		static const float cG;
 		static const float dt;

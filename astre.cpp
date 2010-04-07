@@ -6,7 +6,7 @@
 
 using namespace std;
 
-const float Astre::cG=6.67;//6.67e-11;
+const float Astre::cG=6.67e1;//6.67e-11;
 const float Astre::dt=1;//10e4;
 const float System::distMax=10000;//10e4;
 

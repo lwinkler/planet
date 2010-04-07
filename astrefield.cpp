@@ -188,9 +188,9 @@ void AstreField::mousePressEvent(QMouseEvent *event)
 	}
 }
 
-void AstreField::mouseMoveEvent(QMouseEvent *event)
+/*void AstreField::mouseMoveEvent(QMouseEvent *event)
 {
-	/*if (!barrelPressed)
+	if (!barrelPressed)
 		return;
 	QPoint pos = event->pos();
 	if (pos.x() <= 0)
@@ -198,8 +198,8 @@ void AstreField::mouseMoveEvent(QMouseEvent *event)
 	if (pos.y() >= height())
 		pos.setY(height() - 1);
 	double rad = atan(((double)rect().bottom() - pos.y()) / pos.x());
-	setAngle(qRound(rad * 180 / 3.14159265));*/
-}
+	setAngle(qRound(rad * 180 / 3.14159265));
+}*/
 
 void AstreField::mouseReleaseEvent(QMouseEvent *event)
 {
@@ -222,7 +222,7 @@ void AstreField::mouseReleaseEvent(QMouseEvent *event)
 	if(timerCountNewAstre==0)vx=vy=0; // If simulation stopped
 	
 	float m=6.;
-	float r=pow(m/60.0, 0.333)*20;
+	float r=Astre::RadiusFromMass(m);
 	Astre newAstre(m, r, posSys.x(), posSys.y(), vx, vy, "planet " + cptAstre);
 	sys.AddAstre(newAstre);
 	cptAstre++;
@@ -304,7 +304,7 @@ void AstreField::init()
 	sys.Reset();
 	{
 		float m=600;
-		float r=pow(m/60.0, 0.333)*20;
+		float r=Astre::RadiusFromMass(m);
 		float x=0;
 		float y=0;
 		float vx=0;

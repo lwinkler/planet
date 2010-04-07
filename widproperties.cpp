@@ -1,6 +1,7 @@
 #include <QLCDNumber>
 #include <QLabel>
 #include <QSlider>
+#include <QCheckBox>
 #include <QVBoxLayout>
 
 #include "widproperties.h"
@@ -16,55 +17,20 @@ AstreProperties::AstreProperties(QWidget *parent)
 	init();
 }
 
-AstreProperties::AstreProperties(const QString &text, QWidget *parent)
-: QWidget(parent)
-{
-	init();
-	//setText(text);
-}
-
-//void AstreProperties::SetAstre(Astre* astre1){
-	//astre=astre1;
-//}
-
-void AstreProperties::changeMass(int slider){
-	if(astre.num >= 0) {
-		char tmp[32];
-		float mass = ((float)slider);
-		astre.m= mass;
-		sprintf(tmp, "%f", mass);
-		dispMass->setText(tmp);
-		emit astreChanged(astre.num, astre);
-		update();
-	}
-	/*if(astre!=NULL){
-		astre->m=exp(mass);
-		
-	}
-	else cout<<"Error : No astre set !"<<endl;*/
-}
-
-void AstreProperties::changeRadius(int slider){
-	if (astre.num >= 0) {
-		char tmp[32];
-		astre.r = slider;
-		sprintf(tmp, "%f", astre.r);
-		dispRadius->setText(tmp);
-		emit astreChanged(astre.num, astre);
-		update();
-	}
-	/*
-	if(astre!=NULL)astre->r=exp(radius);
-	else cout<<"Error : No astre set !"<<endl;*/
-}
-
 void AstreProperties::init()
 {
 	astre.num = -1;
+	settingMass=settingRadius=false;
 	hide();
+	label = new QLabel;
+	label->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+	label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+	
+	QLabel* labMass = new QLabel("Mass");
 	dispMass = new QLabel("0");
 	//lcdMass->setSegmentStyle(QLCDNumber::Filled);
 	
+	QLabel* labRadius = new QLabel("Radius");
 	dispRadius = new QLabel("0");
 	//lcdRadius->setSegmentStyle(QLCDNumber::Filled);
 
@@ -76,21 +42,20 @@ void AstreProperties::init()
 	sliderRadius->setRange(0, 999);
 	//sliderRadius->setValue(10);
 	
-	label = new QLabel;
-	label->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-	label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-	
 	connect(sliderMass, SIGNAL(valueChanged(int)),this, SLOT(changeMass(int)));
-	//connect(sliderMass, SIGNAL(valueChanged(int)),dispMass, SLOT(display(int)));
 	connect(sliderRadius, SIGNAL(valueChanged(int)),this, SLOT(changeRadius(int)));
-	//connect(sliderRadius, SIGNAL(valueChanged(int)),dispRadius, SLOT(display(int)));
-			
-	QVBoxLayout *layout = new QVBoxLayout;
+
+	cbFixed  = new QCheckBox(tr("Link mass with radius"));
+	
+	QGridLayout *layout = new QGridLayout;
 	layout->addWidget(label);
-	layout->addWidget(dispMass);
-	layout->addWidget(sliderMass);
-	layout->addWidget(dispRadius);
-	layout->addWidget(sliderRadius);
+	layout->addWidget(labMass,1,0);
+	layout->addWidget(dispMass,1,1);
+	layout->addWidget(sliderMass,1,2);
+	layout->addWidget(labRadius,2,0);
+	layout->addWidget(dispRadius,2,1);
+	layout->addWidget(sliderRadius,2,2);
+	layout->addWidget(cbFixed, 3, 1);
 	setLayout(layout);
 			
 	setFocusProxy(sliderMass);
@@ -98,25 +63,62 @@ void AstreProperties::init()
 	//astre=NULL;
 }
 
+void AstreProperties::changeMass(int slider){
+	cout<<"changeMass"<<endl;
+	if(!settingRadius)settingMass=true;
+	if(astre.num >= 0) {
+		float mass = ((float)slider);
+		astre.m= mass;
+		
+		if(cbFixed->isChecked() && !settingRadius) {
+			astre.r=Astre::RadiusFromMass(astre.m);
+			sliderRadius->setValue(astre.r);
+		}
+		emit astreChanged(astre.num, astre);
+		update();
+	}
+	settingMass=false;
+}
+
+void AstreProperties::changeRadius(int slider){
+	cout<<"changeRAdius"<<endl;
+	if(!settingMass)settingRadius=true;
+	if (astre.num >= 0) {
+		astre.r = slider;
+		if(cbFixed->isChecked() && !settingMass){
+			astre.m=Astre::MassFromRadius(astre.r);
+			sliderMass->setValue(astre.m);
+		}
+		emit astreChanged(astre.num, astre);
+		update();
+	}
+	settingRadius=false;
+}
+
+void AstreProperties::paintEvent(QPaintEvent*){
+	if(astre.num >= 0) {
+		char tmp[32];
+		
+		//Update display
+		sprintf(tmp, "%f", astre.m);
+		dispMass->setText(tmp);
+		sprintf(tmp, "%f", astre.r);
+		dispRadius->setText(tmp);
+	}
+}
+
+/// When a new planet is selected
 void AstreProperties::setAstre(int num, const Astre& a)
 {
 	cout<<"setAstre"<<num<<endl;
 	if(num == -1) hide();
 	else{
 		show();
-		char tmp[32];
+//		char tmp[32];
 		
 		astre = a;
 		astre.num = num;
 
-		sliderMass->setValue((a.m));
-		sliderRadius->setValue(a.r);
-		
-		/*sprintf(tmp, "%f", a.m);
-		dispMass->setText(tmp);
-		sprintf(tmp, "%f", a.r);
-		dispRadius->setText(tmp);*/
-		
 		update();
 	}
 }
