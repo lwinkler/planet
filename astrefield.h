@@ -116,8 +116,8 @@ class AstreField : public QWidget
 		int scaleView;
 		int cptAstre;
 		QTimer *dispTimer;
-		//float shootAngle;
-		//float shootForce;
+		//DTYPE shootAngle;
+		//DTYPE shootForce;
 		
 		//QPoint target;
 		
@@ -125,11 +125,11 @@ class AstreField : public QWidget
 		//bool barrelPressed;
 		
 		//Astre newAstre;
-		float newAstre_x;
-		float newAstre_y;
+		DTYPE newAstre_x;
+		DTYPE newAstre_y;
 		int timerCountNewAstre;
 		QPointF dispCenter;
-		float dispScale;
+		DTYPE dispScale;
 
 	public:
 		System sys;

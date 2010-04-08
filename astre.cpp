@@ -6,9 +6,9 @@
 
 using namespace std;
 
-const float Astre::cG=6.67e1;//6.67e-11;
-const float Astre::dt=1;//10e4;
-const float System::distMax=10000;//10e4;
+const DTYPE Astre::cG=6.67e1;//6.67e-11;
+const DTYPE Astre::dt=1;//10e4;
+const DTYPE System::distMax=10000;//10e4;
 
 Astre::Astre(){// : sys(system){
 	//type=0;
@@ -25,7 +25,7 @@ Astre::Astre(){// : sys(system){
 	//cout<<"size in Astre"<<sys->nb<<" "<<sys->astre.size()<<endl;
 }
 
-Astre::Astre(float _m, float _r, float _x, float _y, float _vx, float _vy, std::string _name){
+Astre::Astre(DTYPE _m, DTYPE _r, DTYPE _x, DTYPE _y, DTYPE _vx, DTYPE _vy, std::string _name){
 	m=_m;
 	r=_r;
 	x=_x;
@@ -74,10 +74,10 @@ void Astre::ComputeForce(System& sys, int& nbCollisions){
 	for(ARR<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++){
 		if(a->m >0 && a->num > num){
 			//cout<<"AAA"<<sys.astre.size()<<" "<<num<<" vs "<<a->num<<endl;
-			float ex= a->x - x;
-			float ey= a->y - y;
-			float sqdist= ex * ex + ey * ey;
-			float dist=sqrt(sqdist);
+			DTYPE ex= a->x - x;
+			DTYPE ey= a->y - y;
+			DTYPE sqdist= ex * ex + ey * ey;
+			DTYPE dist=sqrt(sqdist);
 			
 			if(dist < r + a->r){
 				//Collision
@@ -92,8 +92,8 @@ void Astre::ComputeForce(System& sys, int& nbCollisions){
 			{
 				ex /= dist;
 				ey /= dist;
-				float ffx = ex * m * a->m * cG / sqdist;
-				float ffy = ey * m * a->m * cG / sqdist;
+				DTYPE ffx = ex * m * a->m * cG / sqdist;
+				DTYPE ffy = ey * m * a->m * cG / sqdist;
 				fx += ffx;
 				fy += ffy;
 				a->fx -= ffx;
@@ -173,7 +173,7 @@ int System::Move(){
 	int removed=0;
 	gx=0;
 	gy=0;
-	float m=0;
+	DTYPE m=0;
 	
 	// Compute mass centre
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
@@ -188,7 +188,7 @@ int System::Move(){
 	gy/=m;
 	
 	ARR<Astre>::iterator aa = astre.begin();
-	static float sqdist= distMax * distMax;
+	static DTYPE sqdist= distMax * distMax;
 	while(aa != astre.end() )
 		if(aa->m <= 0 || (aa->x - gx)*(aa->x - gx) + (aa->y - gy)*(aa->y - gy) > sqdist){
 			aa = astre.erase(aa);
@@ -199,11 +199,11 @@ int System::Move(){
 	return removed;
 }
 
-void System::GetBiggestAstrePosition(float& x, float& y)
+void System::GetBiggestAstrePosition(DTYPE& x, DTYPE& y)
 {
 	x=0;
 	y=0;
-	float m=0;
+	DTYPE m=0;
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 	{
 		if(a->m > m){
@@ -214,7 +214,7 @@ void System::GetBiggestAstrePosition(float& x, float& y)
 	}
 }
 
-void System::GetBorders(float& x1, float& y1, float& x2, float& y2)
+void System::GetBorders(DTYPE& x1, DTYPE& y1, DTYPE& x2, DTYPE& y2)
 {
 	x1=y1=1e999;
 	x2=y2=-1e999;
@@ -230,7 +230,7 @@ void System::GetBorders(float& x1, float& y1, float& x2, float& y2)
 	}
 }
 
-int System::FindAstreAtPosition(float x, float y, Astre& found){
+int System::FindAstreAtPosition(DTYPE x, DTYPE y, Astre& found){
 	
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 	{

@@ -8,6 +8,7 @@
 #include <cmath>
 
 #define ARR list
+#define DTYPE double
 
 class Astre;
 
@@ -23,15 +24,15 @@ class System{
 		int NbAstre();
 		void Reset();
 		
-		void GetGravityCenter(float& _x, float& _y) {_x=gx; _y=gy;};
-		void GetBiggestAstrePosition(float& x, float& y);
-		void GetBorders(float& x1, float& y1, float& x2, float& y2);
-		int FindAstreAtPosition(float x, float y, Astre& a);
-		static const float distMax;
+		void GetGravityCenter(DTYPE& _x, DTYPE& _y) {_x=gx; _y=gy;};
+		void GetBiggestAstrePosition(DTYPE& x, DTYPE& y);
+		void GetBorders(DTYPE& x1, DTYPE& y1, DTYPE& x2, DTYPE& y2);
+		int FindAstreAtPosition(DTYPE x, DTYPE y, Astre& a);
+		static const DTYPE distMax;
 	private:
 		int cpt;
-		float gx;
-		float gy;
+		DTYPE gx;
+		DTYPE gy;
 };
 
 class Astre{
@@ -41,7 +42,7 @@ class Astre{
 
 	public:
 		Astre();
-		Astre(float m, float r, float x, float y, float vx, float vy, std::string name);
+		Astre(DTYPE m, DTYPE r, DTYPE x, DTYPE y, DTYPE vx, DTYPE vy, std::string name);
 
 		~Astre();
 		Astre& operator=(const Astre& a);
@@ -51,9 +52,9 @@ class Astre{
 		void Move();
 		
 		
-		inline void GetPosition(float& _x, float& _y){ x=_x ; y=_y;};
-		inline float GetMass() {return m;};
-		inline float GetRadius() {return r;};
+		inline void GetPosition(DTYPE& _x, DTYPE& _y){ x=_x ; y=_y;};
+		inline DTYPE GetMass() {return m;};
+		inline DTYPE GetRadius() {return r;};
 		
 		inline std::string GetName() { return name; };
 		inline void SetName(std::string _name) {name=_name; };
@@ -61,26 +62,26 @@ class Astre{
 		inline void SetNumber(int _num) { num = _num; };
 		inline void ResetForce() {fx=fy=0;};
 		
-		inline static float SetInRange(float x, float min, float max){
+		inline static DTYPE SetInRange(DTYPE x, DTYPE min, DTYPE max){
 			if(x < min)return min;
 			if(x > max)return max;
 			return x;
 		}
-		inline static float MassFromRadius(float r){return r*r*r /125.;};
-		inline static float RadiusFromMass(float m){return std::pow(m, 0.333) * 5.;};
+		inline static DTYPE MassFromRadius(DTYPE r){return r*r*r /125.;};
+		inline static DTYPE RadiusFromMass(DTYPE m){return std::pow(m, 0.333) * 5.;};
 		
-		static const float cG;
-		static const float dt;
+		static const DTYPE cG;
+		static const DTYPE dt;
 		
 		std::string name;
-		float m;
-		float r;
-		float x;
-		float y;
-		float vx;
-		float vy;
-		float fx;
-		float fy;
+		DTYPE m;
+		DTYPE r;
+		DTYPE x;
+		DTYPE y;
+		DTYPE vx;
+		DTYPE vy;
+		DTYPE fx;
+		DTYPE fy;
 		//int type;
 		//int color;
 		int num;

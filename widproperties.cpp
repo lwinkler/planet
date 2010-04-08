@@ -35,11 +35,12 @@ void AstreProperties::init()
 	//lcdRadius->setSegmentStyle(QLCDNumber::Filled);
 
 	sliderMass = new QSlider(Qt::Horizontal);
-	sliderMass->setRange(0, 9999);
+	sliderMass->setRange(0, Astre::MassFromRadius(100));
+	
 	//sliderMass->setValue(100);
 	
 	sliderRadius = new QSlider(Qt::Horizontal);
-	sliderRadius->setRange(0, 999);
+	sliderRadius->setRange(0, 100);
 	//sliderRadius->setValue(10);
 	
 	connect(sliderMass, SIGNAL(valueChanged(int)),this, SLOT(changeMass(int)));
@@ -60,14 +61,13 @@ void AstreProperties::init()
 			
 	setFocusProxy(sliderMass);
 	setUpdatesEnabled(true);
-	//astre=NULL;
 }
 
 void AstreProperties::changeMass(int slider){
 	cout<<"changeMass"<<endl;
 	if(!settingRadius)settingMass=true;
 	if(astre.num >= 0) {
-		float mass = ((float)slider);
+		DTYPE mass = ((DTYPE)slider);
 		astre.m= mass;
 		
 		if(cbFixed->isChecked() && !settingRadius) {
@@ -110,47 +110,14 @@ void AstreProperties::paintEvent(QPaintEvent*){
 /// When a new planet is selected
 void AstreProperties::setAstre(int num, const Astre& a)
 {
-	cout<<"setAstre"<<num<<endl;
+	//cout<<"setAstre"<<num<<a.name<<endl;
 	if(num == -1) hide();
 	else{
 		show();
-//		char tmp[32];
-		
+		label->setText(a.name.c_str());
 		astre = a;
 		astre.num = num;
 
 		update();
 	}
 }
-
-/*int AstreProperties::value() const
-{
-	return slider->value();
-	}
-	
-	QString AstreProperties::text() const
-	{
-		return label->text();
-		}
-		
-		void AstreProperties::setValue(int value)
-		{
-			slider->setValue(value);
-		}
-		
-		void AstreProperties::setRange(int minValue, int maxValue)
-		{
-			if (minValue < 0 || maxValue > 99 || minValue > maxValue) {
-       qWarning("AstreProperties::setRange(%d, %d)\n"
-       "\tRange must be 0..99\n"
-       "\tand minValue must not be greater than maxValue",
-       minValue, maxValue);
-       return;
-       }
-       slider->setRange(minValue, maxValue);
-		}
-		
-		void AstreProperties::setText(const QString &text)
-		{
-			label->setText(text);
-		}*/

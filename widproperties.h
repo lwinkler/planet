@@ -16,23 +16,15 @@ class AstreProperties : public QWidget
 	
 	public:
 		AstreProperties(QWidget *parent = 0);
-		//AstreProperties(const QString &text, QWidget *parent = 0);
-		
-		//int value() const;
-		QString text() const;
+		//QString text() const;
 		
 	public slots:
-		//void setValue(int value);
-		//void setRange(int minValue, int maxValue);
-		//void setText(const QString &text);
-		//void SetAstre(Astre* astre1);
 		void changeMass(int mass);
 		void changeRadius(int radius);
 		void setAstre(int num, const Astre&);
 		
 	signals:
 		void astreChanged(int num, const Astre astre);
-		//void valueChanged(int newValue);
 		
 	private:
 		Astre astre;

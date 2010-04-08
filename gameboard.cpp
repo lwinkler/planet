@@ -27,6 +27,18 @@ using namespace std;
 GameBoard::GameBoard(QWidget *parent)
 : QWidget(parent)
 {
+	// test
+	float*a;
+	for(int i=0;i<10;i++){
+		a=new float;
+		*(a)=i * 1.111;
+		float& b(*a);
+		cout<<"b1="<<b<<endl;
+		delete a;	
+		cout<<"b2="<<b<<endl;
+	}
+	
+	
 	astreField = new AstreField;
 	sys= &astreField->sys;
 	
@@ -54,6 +66,7 @@ GameBoard::GameBoard(QWidget *parent)
 	
 	QLabel* numberLabel = new QLabel(tr("PLANETS"));
 	number = new QLCDNumber(3);
+	number->setSegmentStyle(QLCDNumber::Filled);
 	
 	//QLabel *shotsLeftLabel = new QLabel(tr("SHOTS LEFT"));
 	
@@ -85,20 +98,14 @@ GameBoard::GameBoard(QWidget *parent)
 	viewLayout->addWidget(viewCenter);
 	viewLayout->addWidget(viewScaleLab);
 	viewLayout->addWidget(viewScaleBox);
-
-//	viewLayout->addWidget(viewPlanetList);
-
 	
 	AstreProperties* widProp = new AstreProperties();
 	connect(astreField, SIGNAL(astreSelected(int, const Astre&)), widProp, SLOT(setAstre(int, const Astre&)));
 	connect(widProp, SIGNAL(astreChanged(int, const Astre&)), astreField, SLOT(astreChanged(int, const Astre&)));
 	
 	QHBoxLayout *topLayout = new QHBoxLayout;
-	//topLayout->addWidget(shoot);
 	topLayout->addWidget(numberLabel);
 	topLayout->addWidget(number);
-	//topLayout->addWidget(shotsLeft);
-//	topLayout->addWidget(shotsLeftLabel);
 	topLayout->addStretch(1);
 	topLayout->addWidget(restart);
 	topLayout->addWidget(pause);
@@ -106,7 +113,6 @@ GameBoard::GameBoard(QWidget *parent)
 	QVBoxLayout *leftLayout = new QVBoxLayout;
 	leftLayout->addWidget(widProp);
 	leftLayout->addLayout(viewLayout);
-	//leftLayout->addWidget(force);
 	
 	QVBoxLayout *mainLayout = new QVBoxLayout;
 	mainLayout->addWidget(astreField);
@@ -118,50 +124,14 @@ GameBoard::GameBoard(QWidget *parent)
 	gridLayout->addLayout(leftLayout, 1, 0);
 	gridLayout->addWidget(astreBox, 1, 1, 2, 1);
 	gridLayout->setColumnStretch(1, 10);
+	
 	setLayout(gridLayout);
-	
-	/*angle->setValue(60);
-	force->setValue(25);
-	angle->setFocus();
-	
-	newGame();*/
 }
 
-/*void GameBoard::fire()
-{
-	if (cannonField->gameOver() || cannonField->isShooting())
-	return;
-	shotsLeft->display(shotsLeft->intValue() - 1);
-	cannonField->shoot();
-	}
-	
-	void GameBoard::hit()
-	{
-		hits->display(hits->intValue() + 1);
-		if (shotsLeft->intValue() == 0)
-		cannonField->setGameOver();
-		else
-			cannonField->newTarget();
-	}
-	
-	void GameBoard::missed()
-	{
-		if (shotsLeft->intValue() == 0)
-		cannonField->setGameOver();
-	}
-	
-	void GameBoard::newGame()
-	{
-		shotsLeft->display(15);
-		hits->display(0);
-		cannonField->restartGame();
-		cannonField->newTarget();
-	}*/
-
 void GameBoard::fillViewCenter(int nb){
-	//std::cout<<"fillViewCenter"<<endl;
+	
+	// Fill view selection menu
 	viewCenter->clear();
-
 	viewCenter->addItem(tr("on gravity center"), -3);
 	viewCenter->addItem(tr("on biggest planet"), -2);
 	viewCenter->addItem(tr("global"), -1);
@@ -175,7 +145,7 @@ void GameBoard::fillViewCenter(int nb){
 				//cout<<"add Item "<<a->num<<endl;
 				viewCenter->addItem(str, a->num);
 			}
-	
+	// LCD
 	number->display(sys->NbAstre());
 	update();
 }

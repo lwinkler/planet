@@ -55,7 +55,8 @@
 #include "astre.h"
 #include "astrefield.h"
 
-#include "iostream"
+#include <iostream>
+#include <stdio.h>
 
 #define MIN(a,b) ((a)<(b))?(a):(b)
 #define MAX(a,b) ((a)>(b))?(a):(b)
@@ -216,14 +217,16 @@ void AstreField::mouseReleaseEvent(QMouseEvent *event)
 	QPointF posSys = pos * invmat;
 	timerCountNewAstre = timerCount - timerCountNewAstre;
 	
-	float vx= (posSys.x() - newAstre_x) / (timerCountNewAstre * Astre::dt);
-	float vy= (posSys.y() - newAstre_y) / (timerCountNewAstre * Astre::dt);
+	DTYPE vx= (posSys.x() - newAstre_x) / (timerCountNewAstre * Astre::dt);
+	DTYPE vy= (posSys.y() - newAstre_y) / (timerCountNewAstre * Astre::dt);
 	
 	if(timerCountNewAstre==0)vx=vy=0; // If simulation stopped
 	
-	float m=6.;
-	float r=Astre::RadiusFromMass(m);
-	Astre newAstre(m, r, posSys.x(), posSys.y(), vx, vy, "planet " + cptAstre);
+	DTYPE m=6.;
+	DTYPE r=Astre::RadiusFromMass(m);
+	char name[32];
+	sprintf(name, "planet %d", cptAstre);
+	Astre newAstre(m, r, posSys.x(), posSys.y(), vx, vy, name);
 	sys.AddAstre(newAstre);
 	cptAstre++;
 	newAstre.m=0;
@@ -240,9 +243,9 @@ void AstreField::paintEvent(QPaintEvent * /* event */)
 	painter.setBrush(Qt::black);
 	//painter.drawRect(QRect(0, 0, width(), height()));
 	
-	float x = 0;
-	float y = 0;
-	float x1,y1,x2,y2;
+	DTYPE x = 0;
+	DTYPE y = 0;
+	DTYPE x1,y1,x2,y2;
 	
 	if(centerView== -3)
 	{
@@ -303,13 +306,14 @@ void AstreField::init()
 	dispTimer->stop();
 	sys.Reset();
 	{
-		float m=600;
-		float r=Astre::RadiusFromMass(m);
-		float x=0;
-		float y=0;
-		float vx=0;
-		float vy=0;
-		string name = "planet " + cptAstre;
+		DTYPE m=600;
+		DTYPE r=Astre::RadiusFromMass(m);
+		DTYPE x=0;
+		DTYPE y=0;
+		DTYPE vx=0;
+		DTYPE vy=0;
+		char name[32];
+		sprintf(name, "planet %d", cptAstre);
 		Astre astre(m, r, x, y, vx, vy, name);
 		sys.AddAstre(astre);
 		cptAstre++;
