@@ -8,7 +8,7 @@ using namespace std;
 
 const DTYPE Astre::cG=6.67e1;//6.67e-11;
 const DTYPE Astre::dt=1;//10e4;
-const DTYPE System::distMax=10000;//10e4;
+const DTYPE Universe::distMax=10000;//10e4;
 
 Astre::Astre(){// : sys(system){
 	//type=0;
@@ -66,7 +66,7 @@ void Astre::Move(){
 	y+= vy * dt;
 }
 
-void Astre::ComputeForce(System& sys, int& nbCollisions){
+void Astre::ComputeForce(Universe& sys, int& nbCollisions){
 //		cout<<"size in AstreCompspeed"<<sys.nb<<" "<<sys.astre.size()<<endl;
 	nbCollisions=0;
 	//Compute forces : use simetry of forces
@@ -124,29 +124,29 @@ void Astre::Collision(Astre& big, Astre& small){
 	small.r=0;
 }
 
-System::System(){
+Universe::Universe(){
 	cpt=0;
 //	cout<<"size "<<astre.size()<<endl;
 }
-System::~System(){}
+Universe::~Universe(){}
 
-void System::AddAstre(Astre& a){
+void Universe::AddAstre(Astre& a){
 	cpt++;
 	
 	a.SetNumber(cpt);//astre.size();
 	astre.push_back(a);
 }
 
-int System::NbAstre(){
+int Universe::NbAstre(){
 	return astre.size();
 }
 
-void System::Reset(){
+void Universe::Reset(){
 	astre.resize(0);
 	cpt=0;
 }
 
-int System::ComputeSpeed(){
+int Universe::ComputeSpeed(){
 	int nbCollision=0;
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++){
 		a->ResetForce();
@@ -166,7 +166,7 @@ int System::ComputeSpeed(){
 	return nbCollision;
 }
 
-int System::Move(){
+int Universe::Move(){
 	
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 		a->Move();
@@ -199,7 +199,7 @@ int System::Move(){
 	return removed;
 }
 
-void System::GetBiggestAstrePosition(DTYPE& x, DTYPE& y)
+void Universe::GetBiggestAstrePosition(DTYPE& x, DTYPE& y)
 {
 	x=0;
 	y=0;
@@ -214,7 +214,7 @@ void System::GetBiggestAstrePosition(DTYPE& x, DTYPE& y)
 	}
 }
 
-void System::GetBorders(DTYPE& x1, DTYPE& y1, DTYPE& x2, DTYPE& y2)
+void Universe::GetBorders(DTYPE& x1, DTYPE& y1, DTYPE& x2, DTYPE& y2)
 {
 	x1=y1=1e999;
 	x2=y2=-1e999;
@@ -230,7 +230,7 @@ void System::GetBorders(DTYPE& x1, DTYPE& y1, DTYPE& x2, DTYPE& y2)
 	}
 }
 
-int System::FindAstreAtPosition(DTYPE x, DTYPE y, Astre& found){
+int Universe::FindAstreAtPosition(DTYPE x, DTYPE y, Astre& found){
 	
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 	{

@@ -7,7 +7,7 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += .
 
-CONFIG += qt debug
+#CONFIG += qt debug
 
 # Input
 HEADERS += astre.h astrefield.h gameboard.h widproperties.h

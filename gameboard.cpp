@@ -27,18 +27,6 @@ using namespace std;
 GameBoard::GameBoard(QWidget *parent)
 : QWidget(parent)
 {
-	// test
-	float*a;
-	for(int i=0;i<10;i++){
-		a=new float;
-		*(a)=i * 1.111;
-		float& b(*a);
-		cout<<"b1="<<b<<endl;
-		delete a;	
-		cout<<"b2="<<b<<endl;
-	}
-	
-	
 	astreField = new AstreField;
 	sys= &astreField->sys;
 	

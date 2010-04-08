@@ -48,7 +48,7 @@
 
 class QLCDNumber;
 class QComboBox;
-class System;
+class Universe;
 class AstreField;
 
 
@@ -72,7 +72,7 @@ private:
 		//QLCDNumber *shotsLeft;
 		QComboBox* viewCenter;
 		QLCDNumber* number;
-		System * sys;
+		Universe * sys;
 		AstreField * astreField;
 };
 

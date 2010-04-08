@@ -48,7 +48,7 @@
 #include "astre.h"
 
 class QTimer;
-class System;
+class Universe;
 class Astre;
 
 class AstreField : public QWidget
@@ -132,7 +132,7 @@ class AstreField : public QWidget
 		DTYPE dispScale;
 
 	public:
-		System sys;
+		Universe sys;
 		
 		static const int timerInterval;
 		static const Qt::GlobalColor colors[15];

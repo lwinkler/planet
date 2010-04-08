@@ -64,7 +64,7 @@ void AstreProperties::init()
 }
 
 void AstreProperties::changeMass(int slider){
-	cout<<"changeMass"<<endl;
+	//cout<<"changeMass"<<endl;
 	if(!settingRadius)settingMass=true;
 	if(astre.num >= 0) {
 		DTYPE mass = ((DTYPE)slider);
@@ -81,7 +81,7 @@ void AstreProperties::changeMass(int slider){
 }
 
 void AstreProperties::changeRadius(int slider){
-	cout<<"changeRAdius"<<endl;
+	//cout<<"changeRAdius"<<endl;
 	if(!settingMass)settingRadius=true;
 	if (astre.num >= 0) {
 		astre.r = slider;

@@ -12,12 +12,12 @@
 
 class Astre;
 
-class System{
+class Universe{
 
 	public:
 		std::list<Astre> astre;
-		System();
-		~System();
+		Universe();
+		~Universe();
 		int ComputeSpeed();
 		int Move();
 		void AddAstre(Astre& a);
@@ -37,7 +37,7 @@ class System{
 
 class Astre{
 	private:
-		//System* sys;
+		//Universe* sys;
 		static void Collision(Astre& big, Astre& Small);
 
 	public:
@@ -47,7 +47,7 @@ class Astre{
 		~Astre();
 		Astre& operator=(const Astre& a);
 		
-		void ComputeForce(System& sys, int& nbCollision);
+		void ComputeForce(Universe& sys, int& nbCollision);
 		void ComputeSpeed();
 		void Move();
 		
