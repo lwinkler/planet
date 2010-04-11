@@ -58,20 +58,10 @@ class AstreField : public QWidget
 	public:
 		AstreField(QWidget *parent = 0);
 		~AstreField();
+		Universe sys;
 		
-		/*int angle() const { return currentAngle; }
-		int force() const { return currentForce; }
-		bool gameOver() const { return gameEnded; }
-		bool isShooting() const;
-		QSize sizeHint() const;*/
-		
-	public slots:
-		/*void setAngle(int angle);
-		void setForce(int force);
-		void shoot();
-		void newTarget();
-		void setGameOver();
-		void restartGame();*/
+		static const int timerInterval;
+		static const Qt::GlobalColor colors[15];
 		
 	private slots:
 		void init();
@@ -82,12 +72,8 @@ class AstreField : public QWidget
 		void astreChanged(int, const Astre& a);
 				
 	signals:
-		//void hit();
-		//void missed();
 		void nbAstreChanged(int nb);
 		void astreSelected(int num, const Astre& a);
-		//void forceChanged(int newForce);
-		//void canShoot(bool can);
 		
 	protected:
 		void paintEvent(QPaintEvent *event);
@@ -97,45 +83,19 @@ class AstreField : public QWidget
 		void mouseReleaseEvent(QMouseEvent *event);
 		
 	private:
-		//void paintShot(QPainter &painter);
-		//void paintTarget(QPainter &painter);
-		//void paintBarrier(QPainter &painter);
-		//void paintCannon(QPainter &painter);
-		//QRect cannonRect() const;
-		//QRect shotRect() const;
-		//QRect targetRect() const;
-		//QRect barrierRect() const;
-		//bool barrelHit(const QPoint &pos) const;
-		
-		//int currentAngle;
-		//int currentForce;
-		
 		int timerCount;
 		int centerView;
 		std::ARR<Astre>::iterator centerViewAstre;
 		int scaleView;
 		int cptAstre;
 		QTimer *dispTimer;
-		//DTYPE shootAngle;
-		//DTYPE shootForce;
-		
-		//QPoint target;
-		
-		//bool gameEnded;
-		//bool barrelPressed;
-		
-		//Astre newAstre;
+
 		DTYPE newAstre_x;
 		DTYPE newAstre_y;
 		int timerCountNewAstre;
 		QPointF dispCenter;
 		DTYPE dispScale;
 
-	public:
-		Universe sys;
-		
-		static const int timerInterval;
-		static const Qt::GlobalColor colors[15];
 };
 
 #endif

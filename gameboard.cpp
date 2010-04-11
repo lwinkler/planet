@@ -116,7 +116,7 @@ GameBoard::GameBoard(QWidget *parent)
 	setLayout(gridLayout);
 }
 
-void GameBoard::fillViewCenter(int nb){
+void GameBoard::fillViewCenter(int /*nb*/){
 	
 	// Fill view selection menu
 	viewCenter->clear();

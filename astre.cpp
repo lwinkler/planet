@@ -67,13 +67,11 @@ void Astre::Move(){
 }
 
 void Astre::ComputeForce(Universe& sys, int& nbCollisions){
-//		cout<<"size in AstreCompspeed"<<sys.nb<<" "<<sys.astre.size()<<endl;
 	nbCollisions=0;
 	//Compute forces : use simetry of forces
 	if(m>0)
 	for(ARR<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++){
 		if(a->m >0 && a->num > num){
-			//cout<<"AAA"<<sys.astre.size()<<" "<<num<<" vs "<<a->num<<endl;
 			DTYPE ex= a->x - x;
 			DTYPE ey= a->y - y;
 			DTYPE sqdist= ex * ex + ey * ey;
@@ -82,7 +80,6 @@ void Astre::ComputeForce(Universe& sys, int& nbCollisions){
 			if(dist < r + a->r){
 				//Collision
 				nbCollisions++;
-				//sys.nb--;
 				if(a->m > m)
 					Collision(*a, *this);
 				else
@@ -128,6 +125,7 @@ Universe::Universe(){
 	cpt=0;
 //	cout<<"size "<<astre.size()<<endl;
 }
+
 Universe::~Universe(){}
 
 void Universe::AddAstre(Astre& a){
@@ -166,6 +164,8 @@ int Universe::ComputeSpeed(){
 	return nbCollision;
 }
 
+/// Move all celestial corpses, 1 iteration
+
 int Universe::Move(){
 	
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
@@ -175,7 +175,7 @@ int Universe::Move(){
 	gy=0;
 	DTYPE m=0;
 	
-	// Compute mass centre
+	// Compute and update mass centre
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 	{
 		if(a->m >0){
@@ -187,6 +187,7 @@ int Universe::Move(){
 	gx/=m;
 	gy/=m;
 	
+	// Clean astres
 	ARR<Astre>::iterator aa = astre.begin();
 	static DTYPE sqdist= distMax * distMax;
 	while(aa != astre.end() )
@@ -207,17 +208,17 @@ void Universe::GetBiggestAstrePosition(DTYPE& x, DTYPE& y)
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 	{
 		if(a->m > m){
-			x =a->x;
-			y= a->y;
-			m= a->m;
+			x = a->x;
+			y = a->y;
+			m = a->m;
 		}
 	}
 }
 
 void Universe::GetBorders(DTYPE& x1, DTYPE& y1, DTYPE& x2, DTYPE& y2)
 {
-	x1=y1=1e999;
-	x2=y2=-1e999;
+	x1=y1=1e99;
+	x2=y2=-1e99;
 	
 	for(ARR<Astre>::iterator a=astre.begin(); a != astre.end(); a++)
 	{

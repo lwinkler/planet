@@ -3,6 +3,7 @@
 #include <QSlider>
 #include <QCheckBox>
 #include <QVBoxLayout>
+#include <QPushButton>
 
 #include "widproperties.h"
 #include <cmath>
@@ -35,12 +36,15 @@ void AstreProperties::init()
 	//lcdRadius->setSegmentStyle(QLCDNumber::Filled);
 
 	sliderMass = new QSlider(Qt::Horizontal);
-	sliderMass->setRange(0, Astre::MassFromRadius(100));
+	sliderMass->setRange(1, Astre::MassFromRadius(100));
 	
-	//sliderMass->setValue(100);
+	QPushButton *btnRemove = new QPushButton(tr("&Remove planet"));
+	//btnRemove->setFont(QFont("Times", 18, QFont::Bold));
+	
+	connect(btnRemove, SIGNAL(clicked()), this, SLOT(removeAstre()));
 	
 	sliderRadius = new QSlider(Qt::Horizontal);
-	sliderRadius->setRange(0, 100);
+	sliderRadius->setRange(1, 100);
 	//sliderRadius->setValue(10);
 	
 	connect(sliderMass, SIGNAL(valueChanged(int)),this, SLOT(changeMass(int)));
@@ -57,6 +61,7 @@ void AstreProperties::init()
 	layout->addWidget(dispRadius,2,1);
 	layout->addWidget(sliderRadius,2,2);
 	layout->addWidget(cbFixed, 3, 1);
+	layout->addWidget(btnRemove, 4, 1);
 	setLayout(layout);
 			
 	setFocusProxy(sliderMass);
@@ -93,6 +98,15 @@ void AstreProperties::changeRadius(int slider){
 		update();
 	}
 	settingRadius=false;
+}
+
+void AstreProperties::removeAstre(){
+	if (astre.num >= 0) {
+		astre.m = 0;
+		astre.r = 0;
+		emit astreChanged(astre.num, astre);
+		update();
+	}
 }
 
 void AstreProperties::paintEvent(QPaintEvent*){

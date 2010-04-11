@@ -21,6 +21,7 @@ class AstreProperties : public QWidget
 	public slots:
 		void changeMass(int mass);
 		void changeRadius(int radius);
+		void removeAstre();
 		void setAstre(int num, const Astre&);
 		
 	signals:
