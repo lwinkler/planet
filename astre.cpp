@@ -1,3 +1,10 @@
+/****************************************************************************
+**
+** Simulator of a system of celestial objects
+**
+** Author : Laurent Winkler
+** 
+****************************************************************************/
 #include "astre.h"
 #include <cmath>
 
@@ -10,7 +17,7 @@ const DTYPE Astre::cG=6.67e1;//6.67e-11;
 const DTYPE Astre::dt=1;//10e4;
 const DTYPE Universe::distMax=10000;//10e4;
 
-Astre::Astre(){// : sys(system){
+Astre::Astre(){
 	//type=0;
 	m=0;
 	r=0;
@@ -22,7 +29,6 @@ Astre::Astre(){// : sys(system){
 	name="";
 	fx=0;
 	fy=0;
-	//cout<<"size in Astre"<<sys->nb<<" "<<sys->astre.size()<<endl;
 }
 
 Astre::Astre(DTYPE _m, DTYPE _r, DTYPE _x, DTYPE _y, DTYPE _vx, DTYPE _vy, std::string _name){
@@ -160,11 +166,12 @@ int Universe::ComputeSpeed(){
 		a->ComputeSpeed();
 	}
 	
-	//if(nbCollision>0)cout<<"computespeed coll 2 "<<nbCollision<<endl;
 	return nbCollision;
 }
 
+/* -------------------------------------------------------------------- */
 /// Move all celestial corpses, 1 iteration
+/* -------------------------------------------------------------------- */
 
 int Universe::Move(){
 	
@@ -214,6 +221,9 @@ void Universe::GetBiggestAstrePosition(DTYPE& x, DTYPE& y)
 		}
 	}
 }
+/* -------------------------------------------------------------------- */
+/// Get the borders of universe (most distant planets)
+/* -------------------------------------------------------------------- */
 
 void Universe::GetBorders(DTYPE& x1, DTYPE& y1, DTYPE& x2, DTYPE& y2)
 {
@@ -230,6 +240,10 @@ void Universe::GetBorders(DTYPE& x1, DTYPE& y1, DTYPE& x2, DTYPE& y2)
 		}
 	}
 }
+
+/* -------------------------------------------------------------------- */
+/// find a celestial object from its position
+/* -------------------------------------------------------------------- */
 
 int Universe::FindAstreAtPosition(DTYPE x, DTYPE y, Astre& found){
 	

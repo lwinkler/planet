@@ -1,0 +1,29 @@
+
+*********************************************************************************************************************
+*                                                                                                                   *
+*   A simulator of celestial objects                                                                                *
+*   ================================                                                                                *
+*                                                                                                                   *
+*        Author : Laurent Winkler, laurent.winkler@bluewin.ch                                                       *
+*        Date : April 2010                                                                                          *
+*                                                                                                                   *
+*********************************************************************************************************************
+
+Description
+------------
+This program is a small simulator of the movement of celestial objects in 2 dimensions. It was realized in C++ with 
+the help of the QT framework. 
+
+For help please click the about button. 
+
+Version
+-------
+1.0 : First release
+
+
+Future improvements 
+-------------------
+
+ - improve the drawing of the planets
+ - allow to change the properties of a planet before creation
+ - use of the mouse roller to change the mass of planets

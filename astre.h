@@ -1,8 +1,15 @@
+/****************************************************************************
+**
+** Simulator of a system of celestial objects
+**
+** Author : Laurent Winkler
+** 
+****************************************************************************/
 
 #ifndef ASTRE_H
 #define ASTRE_H
 
-#include <vector>
+//#include <vector>
 #include <list>
 #include <string>
 #include <cmath>
@@ -12,9 +19,13 @@
 
 class Astre;
 
+/// @class Universe The system containing all the celestial corpses
+
 class Universe{
 
 	public:
+		static const DTYPE distMax;
+		
 		std::list<Astre> astre;
 		Universe();
 		~Universe();
@@ -28,18 +39,19 @@ class Universe{
 		void GetBiggestAstrePosition(DTYPE& x, DTYPE& y);
 		void GetBorders(DTYPE& x1, DTYPE& y1, DTYPE& x2, DTYPE& y2);
 		int FindAstreAtPosition(DTYPE x, DTYPE y, Astre& a);
-		static const DTYPE distMax;
 	private:
 		int cpt;
-		DTYPE gx;
+		DTYPE gx;	// Center of gravity
 		DTYPE gy;
 };
 
-class Astre{
-	private:
-		//Universe* sys;
-		static void Collision(Astre& big, Astre& Small);
+/// @class Astre A celestial corpse
 
+class Astre{
+	public:
+		static const DTYPE cG;	// Gravity constant
+		static const DTYPE dt;	// time interval between two iterations
+		
 	public:
 		Astre();
 		Astre(DTYPE m, DTYPE r, DTYPE x, DTYPE y, DTYPE vx, DTYPE vy, std::string name);
@@ -52,7 +64,7 @@ class Astre{
 		void Move();
 		
 		
-		inline void GetPosition(DTYPE& _x, DTYPE& _y){ x=_x ; y=_y;};
+		inline void GetPosition(DTYPE& _x, DTYPE& _y) { x=_x ; y=_y;};
 		inline DTYPE GetMass() {return m;};
 		inline DTYPE GetRadius() {return r;};
 		
@@ -69,23 +81,22 @@ class Astre{
 		}
 		inline static DTYPE MassFromRadius(DTYPE r){return r*r*r /125.;};
 		inline static DTYPE RadiusFromMass(DTYPE m){return std::pow(m, 0.333) * 5.;};
-		
-		static const DTYPE cG;
-		static const DTYPE dt;
-		
+	private:
+		static void Collision(Astre& big, Astre& Small);
+
+	public:
 		std::string name;
-		DTYPE m;
-		DTYPE r;
-		DTYPE x;
-		DTYPE y;
-		DTYPE vx;
-		DTYPE vy;
-		DTYPE fx;
-		DTYPE fy;
+		DTYPE m;	// mass
+		DTYPE r; 	// radius
+		DTYPE x;	// x position
+		DTYPE y;	// y position
+		DTYPE vx;	// x velocity
+		DTYPE vy;	// y velocity
+		DTYPE fx;	// x force
+		DTYPE fy;	// y force
 		//int type;
 		//int color;
-		int num;
-
+		int num;	// number or id
 };
 
 

@@ -1,3 +1,10 @@
+/****************************************************************************
+**
+** Simulator of a system of celestial objects
+**
+** Author : Laurent Winkler
+** 
+****************************************************************************/
 
 #include <QApplication>
 #include <QFont>
@@ -11,8 +18,9 @@
 #include <QShortcut>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QMessageBox>
 
-#include <vector>
+//#include <vector>
 #include <stdio.h>
 #include <iostream>
 
@@ -33,10 +41,10 @@ GameBoard::GameBoard(QWidget *parent)
 	QFrame *astreBox = new QFrame;
 	astreBox->setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
 
-	QPushButton *quit = new QPushButton(tr("&Quit"));
-	quit->setFont(QFont("Times", 18, QFont::Bold));
+	//QPushButton *quit = new QPushButton(tr("&Quit"));
+	//quit->setFont(QFont("Times", 18, QFont::Bold));
 	
-	connect(quit, SIGNAL(clicked()), qApp, SLOT(quit()));
+	//connect(quit, SIGNAL(clicked()), qApp, SLOT(quit()));
 		
 	QPushButton *restart = new QPushButton(tr("&New Simulation"));
 	restart->setFont(QFont("Times", 18, QFont::Bold));
@@ -45,6 +53,10 @@ GameBoard::GameBoard(QWidget *parent)
 	QPushButton *pause = new QPushButton(tr("&Play/Pause"));
 	pause->setFont(QFont("Times", 18, QFont::Bold));
 	
+	QPushButton *about = new QPushButton(tr("&About"));
+	about->setFont(QFont("Times", 18, QFont::Bold));
+	connect(about, SIGNAL(clicked()), this, SLOT(about()));
+
 	connect(pause, SIGNAL(clicked()), astreField, SLOT(pauseSimulation()));
 	
 	//hits->setSegmentStyle(QLCDNumber::Filled);
@@ -97,6 +109,7 @@ GameBoard::GameBoard(QWidget *parent)
 	topLayout->addStretch(1);
 	topLayout->addWidget(restart);
 	topLayout->addWidget(pause);
+	topLayout->addWidget(about);
 	
 	QVBoxLayout *leftLayout = new QVBoxLayout;
 	leftLayout->addWidget(widProp);
@@ -107,7 +120,7 @@ GameBoard::GameBoard(QWidget *parent)
 	astreBox->setLayout(mainLayout);
 	
 	QGridLayout *gridLayout = new QGridLayout;
-	gridLayout->addWidget(quit, 0, 0);
+	//gridLayout->addWidget(quit, 0, 0);
 	gridLayout->addLayout(topLayout, 0, 1);
 	gridLayout->addLayout(leftLayout, 1, 0);
 	gridLayout->addWidget(astreBox, 1, 1, 2, 1);
@@ -136,4 +149,15 @@ void GameBoard::fillViewCenter(int /*nb*/){
 	// LCD
 	number->display(sys->NbAstre());
 	update();
+}
+
+void GameBoard::about(){
+	QMessageBox::about(this, tr("About Celestial Corpse Simulator"),
+				tr("<p>This program simulates the movement of celestial corpses in two dimensions.</p> <p>To create a new corpse "
+				"use a mouse <b>right click</b> when the simulation is in progress, you can move the mouse to give an initial velocity. </p>"
+				"<p> To change the properties of an existing corpse use <b>left click</b>. </p>"
+				"<b>Author</b> Laurent Winkler, laurent.winkler@bluewin.ch"
+				));
+
+	
 }

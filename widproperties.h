@@ -1,3 +1,12 @@
+/****************************************************************************
+**
+** Simulator of a system of celestial objects
+**
+** Author : Laurent Winkler
+** 
+** 
+**
+****************************************************************************/
 
 #ifndef ASTREPROPERTIES_H
 #define ASTREPROPERTIES_H
@@ -10,13 +19,14 @@ class QSlider;
 class QLabel;
 class QCheckBox;
 
+/// @class AstreProperties QT widget to edit the properties of a celestial corpse 
+
 class AstreProperties : public QWidget
 {
 	Q_OBJECT
 	
 	public:
 		AstreProperties(QWidget *parent = 0);
-		//QString text() const;
 		
 	public slots:
 		void changeMass(int mass);

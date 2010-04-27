@@ -1,3 +1,11 @@
+/****************************************************************************
+**
+** Simulator of a system of celestial objects
+**
+** Author : Laurent Winkler
+** 
+****************************************************************************/
+
 #include <QLCDNumber>
 #include <QLabel>
 #include <QSlider>
@@ -51,6 +59,7 @@ void AstreProperties::init()
 	connect(sliderRadius, SIGNAL(valueChanged(int)),this, SLOT(changeRadius(int)));
 
 	cbFixed  = new QCheckBox(tr("Link mass with radius"));
+	cbFixed->setChecked(true);
 	
 	QGridLayout *layout = new QGridLayout;
 	layout->addWidget(label);
