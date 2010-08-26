@@ -39,6 +39,7 @@ class Universe{
 		void GetBiggestAstrePosition(DTYPE& x, DTYPE& y);
 		void GetBorders(DTYPE& x1, DTYPE& y1, DTYPE& x2, DTYPE& y2);
 		int FindAstreAtPosition(DTYPE x, DTYPE y, Astre& a);
+                void CreateRandom(int nbAstres, DTYPE posX, DTYPE posY, DTYPE distMax, DTYPE massMax, DTYPE radiusMax, DTYPE speedMax);
 	private:
 		int cpt;
 		DTYPE gx;	// Center of gravity

@@ -52,12 +52,16 @@ GameBoard::GameBoard(QWidget *parent)
 	
 	QPushButton *pause = new QPushButton(tr("&Play/Pause"));
 	pause->setFont(QFont("Times", 18, QFont::Bold));
+	connect(pause, SIGNAL(clicked()), astreField, SLOT(pauseSimulation()));
 	
 	QPushButton *about = new QPushButton(tr("&About"));
 	about->setFont(QFont("Times", 18, QFont::Bold));
 	connect(about, SIGNAL(clicked()), this, SLOT(about()));
 
-	connect(pause, SIGNAL(clicked()), astreField, SLOT(pauseSimulation()));
+	QPushButton *random = new QPushButton(tr("&Create random"));
+	random->setFont(QFont("Times", 18, QFont::Bold));
+	connect(random, SIGNAL(clicked()), astreField, SLOT(createRandom()));
+
 	
 	//hits->setSegmentStyle(QLCDNumber::Filled);
 	
@@ -108,6 +112,7 @@ GameBoard::GameBoard(QWidget *parent)
 	topLayout->addWidget(number);
 	topLayout->addStretch(1);
 	topLayout->addWidget(restart);
+	topLayout->addWidget(random);
 	topLayout->addWidget(pause);
 	topLayout->addWidget(about);
 	
@@ -161,3 +166,5 @@ void GameBoard::about(){
 
 	
 }
+
+

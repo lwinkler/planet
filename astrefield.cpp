@@ -301,3 +301,16 @@ void AstreField::astreChanged(int num, const Astre& astre1){
 	update();
 }
 
+void AstreField::createRandom(){
+	DTYPE m=100;
+	DTYPE r=Astre::RadiusFromMass(m);
+	DTYPE x=0;
+	DTYPE y=0;
+	sys.GetGravityCenter(x,y);
+	DTYPE v=100;
+	sys.CreateRandom(10, x, y, Universe::distMax, m, r, v);
+	update();
+}
+
+
+

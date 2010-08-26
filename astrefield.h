@@ -37,6 +37,7 @@ class AstreField : public QWidget
 		void changeViewCenter(int index);
 		void changeViewScale(int index);
 		void astreChanged(int, const Astre& a);
+		void createRandom();
 				
 	signals:
 		void nbAstreChanged(int nb);

@@ -9,6 +9,7 @@
 #include <cmath>
 
 #include <stdio.h>
+#include <cstdlib> 
 #include <iostream>
 
 using namespace std;
@@ -128,6 +129,8 @@ void Astre::Collision(Astre& big, Astre& small){
 }
 
 Universe::Universe(){
+       	srand((unsigned)time(NULL));
+
 	cpt=0;
 //	cout<<"size "<<astre.size()<<endl;
 }
@@ -258,4 +261,23 @@ int Universe::FindAstreAtPosition(DTYPE x, DTYPE y, Astre& found){
 	}
 	return -1;
 	
+}
+
+/* -------------------------------------------------------------------- */
+/// create a set of random planets
+/* -------------------------------------------------------------------- */
+#define RAND() (((double)rand()) / RAND_MAX)
+
+void Universe::CreateRandom(int nbAstres, DTYPE posX, DTYPE posY, DTYPE distMax, DTYPE massMax, DTYPE radiusMax, DTYPE speedMax){
+	static int cptAstre = 0;
+
+	for(int i =0; i < nbAstres; i++)
+	{
+		char name[32];
+		sprintf(name, "random planet %d", cptAstre);
+		Astre a(RAND() * massMax , RAND() * radiusMax, posX + (RAND()-0.5) * distMax ,
+                    posY + (RAND()-0.5) * distMax, (RAND()-0.5) * speedMax, (RAND()-0.5) * speedMax, name);
+		AddAstre(a);
+		cptAstre++;
+	}
 }
