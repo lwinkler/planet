@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <time.h>
 
 #define MIN(a,b) ((a)<(b))?(a):(b)
 #define MAX(a,b) ((a)>(b))?(a):(b)
@@ -94,6 +95,7 @@ void AstreField::changeViewScale(int index)
 
 void AstreField::moveSys()
 {
+	clock_t startTime = clock();
 	//QRegion region = QRect();
 	//cout<<"moveSys"<<endl;
 	++timerCount;
@@ -121,6 +123,10 @@ void AstreField::moveSys()
 		//}
 		//update(region);
 	}
+	clock_t stopTime = clock();
+	steps++;
+	perf = ( (double)stopTime - startTime) / CLOCKS_PER_SEC;
+	emit systemMoved(0);
 	update();
 }
 
@@ -286,6 +292,8 @@ void AstreField::init()
 		sys.AddAstre(astre);
 		cptAstre++;
 	}
+	steps=0;
+	perf=0;
 	emit nbAstreChanged(sys.NbAstre());
 	update();
 }
@@ -307,8 +315,9 @@ void AstreField::createRandom(){
 	DTYPE x=0;
 	DTYPE y=0;
 	sys.GetGravityCenter(x,y);
-	DTYPE v=100;
+	DTYPE v=20;
 	sys.CreateRandom(10, x, y, Universe::distMax, m, r, v);
+	emit nbAstreChanged(sys.NbAstre());
 	update();
 }
 

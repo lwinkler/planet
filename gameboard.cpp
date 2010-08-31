@@ -68,9 +68,17 @@ GameBoard::GameBoard(QWidget *parent)
 	//shotsLeft = new QLCDNumber(2);
 	//shotsLeft->setSegmentStyle(QLCDNumber::Filled);
 	
-	QLabel* numberLabel = new QLabel(tr("PLANETS"));
+	QLabel* numberLabel = new QLabel(tr("Planets"));
 	number = new QLCDNumber(3);
 	number->setSegmentStyle(QLCDNumber::Filled);
+	
+	QLabel* stepsLabel = new QLabel(tr("Steps"));
+	steps = new QLCDNumber(5);
+	steps->setSegmentStyle(QLCDNumber::Filled);
+
+	QLabel* perfLabel = new QLabel(tr("Comp. time [ms]"));
+	perf = new QLCDNumber(5);
+	perf->setSegmentStyle(QLCDNumber::Filled);
 	
 	//QLabel *shotsLeftLabel = new QLabel(tr("SHOTS LEFT"));
 	
@@ -86,6 +94,7 @@ GameBoard::GameBoard(QWidget *parent)
 	fillViewCenter(1);
 	connect(viewCenter, SIGNAL(activated(int)), astreField, SLOT(changeViewCenter(int)));
 	connect(astreField, SIGNAL(nbAstreChanged(int)), this, SLOT(fillViewCenter(int)));
+	connect(astreField, SIGNAL(systemMoved(int)), this, SLOT(fillViewCenter(int)));
 	QLabel* viewScaleLab = new QLabel(tr("Scale"));
 	QSpinBox* viewScaleBox= new QSpinBox();
 	viewScaleBox->setMinimum(1);
@@ -110,6 +119,10 @@ GameBoard::GameBoard(QWidget *parent)
 	QHBoxLayout *topLayout = new QHBoxLayout;
 	topLayout->addWidget(numberLabel);
 	topLayout->addWidget(number);
+	topLayout->addWidget(stepsLabel);
+	topLayout->addWidget(steps);
+	topLayout->addWidget(perfLabel);
+	topLayout->addWidget(perf);
 	topLayout->addStretch(1);
 	topLayout->addWidget(restart);
 	topLayout->addWidget(random);
@@ -153,6 +166,8 @@ void GameBoard::fillViewCenter(int /*nb*/){
 			}
 	// LCD
 	number->display(sys->NbAstre());
+	steps->display(astreField->GetNbSteps());
+	perf->display((int) 1e3 * astreField->GetComputationTime());
 	update();
 }
 

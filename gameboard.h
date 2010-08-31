@@ -34,6 +34,8 @@ class GameBoard : public QWidget
 private:
 		QComboBox* viewCenter;
 		QLCDNumber* number;
+		QLCDNumber* steps;
+		QLCDNumber* perf;
 		Universe * sys;
 		AstreField * astreField;
 };

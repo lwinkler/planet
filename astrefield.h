@@ -25,6 +25,10 @@ class AstreField : public QWidget
 	public:
 		AstreField(QWidget *parent = 0);
 		~AstreField();
+
+		int GetNbSteps() { return steps; };
+		double GetComputationTime() { return perf; };
+
 		Universe sys;
 		
 		static const int timerInterval;
@@ -41,6 +45,7 @@ class AstreField : public QWidget
 				
 	signals:
 		void nbAstreChanged(int nb);
+		void systemMoved(int nb);
 		void astreSelected(int num, const Astre& a);
 		
 	protected:
@@ -56,6 +61,8 @@ class AstreField : public QWidget
 		std::ARR<Astre>::iterator centerViewAstre;
 		int scaleView;
 		int cptAstre;
+		double perf;
+		int steps;
 		QTimer *dispTimer;
 
 		DTYPE newAstre_x;
