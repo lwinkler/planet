@@ -95,7 +95,7 @@ void AstreField::changeViewScale(int index)
 
 void AstreField::moveSys()
 {
-	clock_t startTime = clock();
+	static clock_t startTime = clock();
 	//QRegion region = QRect();
 	//cout<<"moveSys"<<endl;
 	++timerCount;
@@ -123,11 +123,18 @@ void AstreField::moveSys()
 		//}
 		//update(region);
 	}
-	clock_t stopTime = clock();
 	steps++;
-	perf = ( (double)stopTime - startTime) / CLOCKS_PER_SEC;
-	emit systemMoved(0);
-	update();
+	
+	if(steps % 10 == 0)
+	{
+		clock_t stopTime = clock();
+		perf = ( (double)(stopTime - startTime)) / (10. * CLOCKS_PER_SEC);
+		//sumPerf = 0;
+		startTime = clock();
+		emit systemMoved(0);		
+	}
+
+	update();	
 }
 
 void AstreField::mousePressEvent(QMouseEvent *event)
