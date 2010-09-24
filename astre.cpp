@@ -1,10 +1,25 @@
-/****************************************************************************
-**
-** Simulator of a system of celestial objects
-**
-** Author : Laurent Winkler
-** 
-****************************************************************************/
+/***************************************************************************
+ *   Copyright (C) 2010                                                    *
+ *   laurent.winkler@bluewin.ch                                            *
+ *                                                                         *
+ *   Simulator of planetary system                                         *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "astre.h"
 #include <cmath>
 
@@ -17,6 +32,14 @@ using namespace std;
 const DTYPE Astre::cG=6.67e1;//6.67e-11;
 const DTYPE Astre::dt=1;//10e4;
 const DTYPE Universe::distMax=10000;//10e4;
+
+/* -------------------------------------------------------------------- */
+/// Method for the Astre class
+/* -------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------- */
+/// Empty constructor
+/* -------------------------------------------------------------------- */
 
 Astre::Astre(){
 	//type=0;
@@ -32,6 +55,10 @@ Astre::Astre(){
 	fy=0;
 }
 
+/* -------------------------------------------------------------------- */
+/// Constructor
+/* -------------------------------------------------------------------- */
+
 Astre::Astre(DTYPE _m, DTYPE _r, DTYPE _x, DTYPE _y, DTYPE _vx, DTYPE _vy, std::string _name){
 	m=_m;
 	r=_r;
@@ -45,8 +72,17 @@ Astre::Astre(DTYPE _m, DTYPE _r, DTYPE _x, DTYPE _y, DTYPE _vx, DTYPE _vy, std::
 	fy=0;
 }
 
+/* -------------------------------------------------------------------- */
+/// Destructor
+/* -------------------------------------------------------------------- */
+
+
 Astre::~Astre(){
 }
+
+/* -------------------------------------------------------------------- */
+/// Copy constructor
+/* -------------------------------------------------------------------- */
 
 Astre& Astre::operator=(const Astre& a){
 //	type=a.type;
@@ -66,6 +102,10 @@ Astre& Astre::operator=(const Astre& a){
 	return *this;
 }
 
+/* -------------------------------------------------------------------- */
+/// Move the corpse
+/* -------------------------------------------------------------------- */
+
 void Astre::Move(){
 	//printf("num=%d m=%f x=%f y=%f vx=%f vy=%f fx=%f fy=%f\n",num,m,x,y,vx,vy,fx,fy);
 	
@@ -73,8 +113,13 @@ void Astre::Move(){
 	y+= vy * dt;
 }
 
+/* -------------------------------------------------------------------- */
+/// Compute the forces applying to a corpse
+/* -------------------------------------------------------------------- */
+
 void Astre::ComputeForce(Universe& sys, int& nbCollisions){
 	nbCollisions=0;
+
 	//Compute forces : use simetry of forces
 	if(m>0)
 	for(ARR<Astre>::iterator a=sys.astre.begin(); a != sys.astre.end(); a++){
@@ -82,7 +127,7 @@ void Astre::ComputeForce(Universe& sys, int& nbCollisions){
 			DTYPE ex= a->x - x;
 			DTYPE ey= a->y - y;
 			DTYPE sqdist= ex * ex + ey * ey;
-			DTYPE dist=sqrt(sqdist);
+			DTYPE dist= sqrt(sqdist);
 			
 			if(dist < r + a->r){
 				//Collision
@@ -108,12 +153,20 @@ void Astre::ComputeForce(Universe& sys, int& nbCollisions){
 //	cout<<"ax "<<ax<<"ay "<<ay<<endl;
 }
 
+/* -------------------------------------------------------------------- */
+///Compute the speed given the force
+/* -------------------------------------------------------------------- */
+
 void Astre::ComputeSpeed(){
 	// Compute speed
 	
 	vx+= fx/m * dt;
 	vy+= fy/m * dt;
 }
+
+/* -------------------------------------------------------------------- */
+/// Collision between two corpses
+/* -------------------------------------------------------------------- */
 
 void Astre::Collision(Astre& big, Astre& small){
 	big.vx= (big.vx * big.m + small.vx * small.m)/(big.m + small.m);
@@ -128,6 +181,14 @@ void Astre::Collision(Astre& big, Astre& small){
 	small.r=0;
 }
 
+/* -------------------------------------------------------------------- */
+/// Method for the Universe class
+/* -------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------- */
+/// Constructor
+/* -------------------------------------------------------------------- */
+
 Universe::Universe(){
        	srand((unsigned)time(NULL));
 
@@ -135,8 +196,15 @@ Universe::Universe(){
 //	cout<<"size "<<astre.size()<<endl;
 }
 
+/* -------------------------------------------------------------------- */
+/// Destructor
+/* -------------------------------------------------------------------- */
+
 Universe::~Universe(){}
 
+/* -------------------------------------------------------------------- */
+/// Add an astre
+/* -------------------------------------------------------------------- */
 void Universe::AddAstre(Astre& a){
 	cpt++;
 	
@@ -144,14 +212,26 @@ void Universe::AddAstre(Astre& a){
 	astre.push_back(a);
 }
 
+/* -------------------------------------------------------------------- */
+/// Get astre number
+/* -------------------------------------------------------------------- */
+
 int Universe::NbAstre(){
 	return astre.size();
 }
+
+/* -------------------------------------------------------------------- */
+/// Reset universe
+/* -------------------------------------------------------------------- */
 
 void Universe::Reset(){
 	astre.resize(0);
 	cpt=0;
 }
+
+/* -------------------------------------------------------------------- */
+/// Compute the speed for the whole universe
+/* -------------------------------------------------------------------- */
 
 int Universe::ComputeSpeed(){
 	int nbCollision=0;
@@ -210,6 +290,9 @@ int Universe::Move(){
 	return removed;
 }
 
+/* -------------------------------------------------------------------- */
+/// Get the position of the biggest astre
+/* -------------------------------------------------------------------- */
 void Universe::GetBiggestAstrePosition(DTYPE& x, DTYPE& y)
 {
 	x=0;
