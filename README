@@ -45,3 +45,10 @@ Future improvements
  - use of the mouse roller to change the mass of planets
 
 Copyright 2010, Laurent Winkler
+
+Build
+-----
+Use commands:
+
+	qmake .
+	make
